@@ -1,0 +1,29 @@
+﻿bridge_barr,code_cat,code_name,total
+Bridge,Data bridge,Scale appropriate for system,21
+Bridge,Data bridge,Availability for species,88
+Bridge,Data bridge,Advances in Tech,40
+Bridge,Data bridge,Open-Access Public Data,11
+Bridge,Data bridge,Enviro Access,46
+Bridge,Data bridge,Stakeholder/Anthropogenic Data Access,22
+Bridge,Social bridge,Resource Availability (economical),7
+Bridge,Social bridge,Pre-existing regulation & management institutions,39
+Bridge,Social bridge,Adoption Interests & Incentives,43
+Bridge,Social bridge,DOM implementation feasible (Socio-econ),25
+Bridge,Social bridge,Open Communication or Co-Mngmt in place,76
+Bridge,Species bridge,Climate change,18
+Bridge,Species bridge,Distinct Habitat between target and non-target species,9
+Bridge,Species bridge,Environmental and/or prey associations,82
+Bridge,Species bridge,Migratory and/or dynamic range,43
+Bridge,Species bridge,Limited Prey Resources,5
+Bridge,Species bridge,Known Species Nat History,53
+Bridge,Species bridge,Fine Scale management required,13
+Barrier,Data barrier,Cost,22
+Barrier,Data barrier,Gaps and Accuracy,59
+Barrier,Data barrier,Mismatch in scale,17
+Barrier,Species barrier,Model Abuse,3
+Barrier,Species barrier,Switch to multi-species mngmnt,12
+Barrier,Species barrier,Climate change,8
+Barrier,Social barrier,Unintended consequences,5
+Barrier,Social barrier,Political permanence,3
+Barrier,Social barrier,Communication & Distribution,4
+Barrier,Social barrier,Recipient participation,44

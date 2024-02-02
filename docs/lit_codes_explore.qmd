@@ -1,0 +1,88 @@
+---
+title: "literature coding explore"
+date: "`r Sys.Date()`"
+format:
+ html: 
+  self-contained: true
+editor: visual
+toc: TRUE
+toc-title: "On this page"
+theme: yeti
+fontcolor: "#134f5c"
+---
+
+## Selecting the literature that was included in this systematic review
+
+In June 2022 a systematic search was completed using Web of Science to identify articles that mentioned factors that either contributed to "successful" implementation of dynamic ocean management (DOM), hereafter referred to as a "bridge". Literature that discussed factors that would need to be addressed or considered prior to effective implementation of dynamic management approaches or tools were also included, hereafter referred to as a "barrier". In this systematic review, we coded bridges and barriers that were related to DOM voluntary programs or enforced regulations, as well as those that were related to tools (e.g., species spatial modeling tools such as EcoCast) that support dynamic management approaches.
+
+During the initial search, the following table of primary and secondary terms were used:
+
+| Primary term               | Secondary term |
+|----------------------------|----------------|
+| Dynamic ocean management   | Success        |
+| Dynamic spatial management | Efficiency     |
+| Adaptive management        | Obstacles      |
+| Dynamic closures           | Limitations    |
+| Bycatch reduction          |                |
+| Habitat preference         |                |
+
+A search was completed in Web of Science for each combination of primary and secondary terms. Works from the primary (i.e., peer reviewed journals) and grey (e.g., theses, book chapters) were included, and this initial search resulted in 1,351 articles. The titles and abstracts for each of these documents were scanned for relevance, and the inclusion of the terms 'dynamic' or 'adaptive' management were confirmed. From this cut, a remaining 127 articles were saved. An additional search through the NOAA Institutional Repository and Federal Register was also completed. Here, documents such as policy reports and planning documents were selected. This search resulted in 795 documents. The titles and abstracts for each of these documents were scanned for relevance, and ultimately, 10 articles were saved for a full read through to determine final inclusion. Inclusion and exclusion criteria for both queries are described here:
+
+| Inclusion                                                                                                                                                                                                  | Exclusion                                                                                                                                                                                                    |
+|------------------------------------|:-----------------------------------|
+| All cases where adaptive or near-real time forms of management or tools that support this form of management were discussed, even if the specific term 'Dynamic Ocean Management' was not explicitly used. | The term 'DOM' was mentioned, or even recommended, but there was no discussion as to why (e.g. SDM studies that suggest DOM applications as a next step for their model)                                     |
+| All cases where near real-time SDM tools or fleet-wide communication to avoid negative species interactions.                                                                                               | Articles that involved changes or updates to environmental data stores or remote sensing tools used for developing SDM tools to support DOM, but DOM was not specifically applied, recommended, or reviewed. |
+
+The final list of included works consisted of 137 documents. Each of these were fully read by two reviewers and went through a final pass for determining inclusion. Additional snowball sampling was performed to identify and include articles that were referenced in this list. The abstracts of these referenced articles were read and their inclusion was determined. Lastly, the search ended in August 2023 and articles or documents published after this date were not included in this review. The final list of works analyzed for the review included 110 articles (i.e., primary literature, student theses, policy reports, textbook chapters).
+
+## Coding the bridges and barriers as identified in the literature
+
+Two reviewers went through each of the 110 articles to identify pieces of text that were related to the "successful" implementation of DOM or its recommendation, as well as the barriers or obstacles that hindered the efficacy of this approach or must be considered prior to it's broader application. Through this effort, 17 "bridges" and 9 "barriers" themes were coded. For both the bridges and barriers code categories, three larger groups were established: species, social, and data factors. A draft of the full list of codes/themes are depicted here. Please note that this was a draft of codes, and thus a few themes may be missing or the exact language may be revised over time.
+
+::: panel-tabset
+### Bridges
+
+![](images/sunburst_success.png){fig-align="center" width="100%"}
+
+### Barriers
+
+![](images/sunburst_limits.png){width="100%"}
+:::
+
+## Visualizing the bridges and barriers themes from the literature
+
+Below is a first attempt at how to visualize some of the data collected from this review. This first section represents general information about the articles selected for this review (e.g., study location, fisheries or shipping channels involved, species for which the tool or management program was established for).
+
+### Study information
+
+::: panel-tabset
+#### Study regions
+
+#### Study fisheries and shipping channels
+
+#### Study species
+
+#### Conservation problem being addressed
+:::
+
+### Code counts/frequencies
+
+### Codes vs. study information
+
+### Code co-occurrence themes
+
+::: panel-tabset
+#### All codes
+
+#### Bridges codes
+
+#### Barriers codes
+:::
+
+### Keywords and literature type
+
+::: panel-tabset
+#### Keywords
+
+#### Literature type
+:::
