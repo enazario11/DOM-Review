@@ -11,6 +11,24 @@ theme: yeti
 fontcolor: "#134f5c"
 ---
 
+```{r}
+#| include: false
+#| echo: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(tidyquant)
+library(here)
+
+codes_vars <- read.csv(here("data/code_w_vars.csv"))
+code_freq <- read.csv(here("data/code_freq2.csv"))
+keywords <- read.csv(here("data/keywords.csv"))
+occur_all <- read.csv(here("data/overlap_all.csv"))
+occur_br <- read.csv(here("data/overlap_bridge.csv"))
+occur_ba <- read.csv(here("data/overlap_barrier.csv"))
+```
+
 ## Selecting the literature that was included in this systematic review
 
 In June 2022 a systematic search was completed using Web of Science to identify articles that mentioned factors that either contributed to "successful" implementation of dynamic ocean management (DOM), hereafter referred to as a "bridge". Literature that discussed factors that would need to be addressed or considered prior to effective implementation of dynamic management approaches or tools were also included, hereafter referred to as a "barrier". In this systematic review, we coded bridges and barriers that were related to DOM voluntary programs or enforced regulations, as well as those that were related to tools (e.g., species spatial modeling tools such as EcoCast) that support dynamic management approaches.
@@ -58,11 +76,227 @@ Below is a first attempt at how to visualize some of the data collected from thi
 ::: panel-tabset
 #### Study regions
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 7
+#| fig-height: 7
+
+codes_vars$broad_location <- as.factor(codes_vars$broad_location)
+codes_LU <- codes_vars[!duplicated(codes_vars$Lit_unit), ]
+reg_s <- codes_LU %>%
+  group_by(broad_location) %>%
+  filter(broad_location != "NA" & broad_location != "Europe and United States") %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  mutate(perc = count/sum(count)*100) 
+
+
+reg_bar <- ggplot(reg_s) +
+  geom_bar(aes(x = perc, y = reorder(broad_location, perc)), fill = "dodgerblue4", width = 0.6, stat = "identity")+
+  scale_x_continuous(position = "top", 
+                     expand = c(0,0), 
+                     limits = c(0, 48))+
+  scale_y_discrete(expand = expansion(add = c(0.5,0.5))) + 
+  theme(
+    # Set background color to white
+    panel.background = element_rect(fill = "white"),
+    # Set the color and the width of the grid lines for the horizontal axis
+    panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+    # Remove tick marks by setting their length to 0
+    axis.ticks.length = unit(0, "mm"),
+    # Remove the title for both axes
+    axis.title = element_blank(),
+    # Only left line of the vertical axis is painted in black
+    axis.line.y.left = element_line(color = "black"),
+    # Remove labels from the vertical axis
+    axis.text.y = element_blank(),
+    # But customize labels for the horizontal axis
+    axis.text.x = element_text(family = "Econ Sans Cnd", size = 12)) + 
+  geom_text(aes(x = perc, y = broad_location, label = broad_location),
+    hjust = 0,
+    nudge_x = 0.3,
+    colour = "dodgerblue4",
+    family = "Econ Sans Cnd",
+    size = 3.5)+
+  labs(subtitle = "Percent of sum from all articles (%)") + 
+  theme(plot.subtitle = element_text(
+      family = "Econ Sans Cnd",
+      size = 13)
+  )
+
+reg_bar
+```
+
 #### Study fisheries and shipping channels
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 10
+#| fig-width: 10
+fsh_shp <- codes_LU %>%
+  gather(col, fsh_shp, fishery_or_channel1:fishery_or_channel4) %>%
+  subset(select = fsh_shp)
+
+
+fsh_shp_s <- fsh_shp %>%
+  group_by(fsh_shp) %>%
+  filter(fsh_shp != "NA") %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  mutate(perc = count/sum(count)*100) 
+
+
+fsh_shp_bar <- ggplot(fsh_shp_s) +
+  geom_bar(aes(x = perc, y = reorder(fsh_shp, perc)), fill = "dodgerblue4", width = 0.6, stat = "identity")+
+  scale_x_continuous(position = "top", 
+                     expand = c(0,0), 
+                     limits = c(0, 14))+
+  scale_y_discrete(expand = expansion(add = c(0.5,0.5))) + 
+  theme(
+    # Set background color to white
+    panel.background = element_rect(fill = "white"),
+    # Set the color and the width of the grid lines for the horizontal axis
+    panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+    # Remove tick marks by setting their length to 0
+    axis.ticks.length = unit(0, "mm"),
+    # Remove the title for both axes
+    axis.title = element_blank(),
+    # Only left line of the vertical axis is painted in black
+    axis.line.y.left = element_line(color = "black"),
+    # Remove labels from the vertical axis
+    axis.text.y = element_blank(),
+    # But customize labels for the horizontal axis
+    axis.text.x = element_text(family = "Econ Sans Cnd", size = 15)) + 
+  geom_text(aes(x = perc, y = fsh_shp, label = fsh_shp),
+    hjust = 0,
+    nudge_x = 0.3,
+    colour = "dodgerblue4",
+    family = "Econ Sans Cnd",
+    size = 5)+
+  labs(subtitle = "Percent of sum from all articles (%)") + 
+  theme(plot.subtitle = element_text(
+      family = "Econ Sans Cnd",
+      size = 16)
+  )
+
+fsh_shp_bar
+```
 
 #### Study species
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 7
+#| fig-height: 7
+
+species <- codes_LU %>%
+  gather(col, taxa, focal_taxa1:focal_taxa3) %>%
+  subset(select = taxa)
+
+spp_s <- species %>%
+  group_by(taxa) %>%
+  filter(taxa != "NA" & taxa != "Marine mammals") %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  mutate(perc = count/sum(count)*100) 
+
+taxa_bar <- ggplot(spp_s) +
+  geom_bar(aes(x = perc, y = reorder(taxa, perc)), fill = "dodgerblue4", width = 0.6, stat = "identity")+
+  scale_x_continuous(position = "top", 
+                     expand = c(0,0), 
+                     limits = c(0, 23))+
+  scale_y_discrete(expand = expansion(add = c(0.5,0.5))) + 
+  theme(
+    # Set background color to white
+    panel.background = element_rect(fill = "white"),
+    # Set the color and the width of the grid lines for the horizontal axis
+    panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+    # Remove tick marks by setting their length to 0
+    axis.ticks.length = unit(0, "mm"),
+    # Remove the title for both axes
+    axis.title = element_blank(),
+    # Only left line of the vertical axis is painted in black
+    axis.line.y.left = element_line(color = "black"),
+    # Remove labels from the vertical axis
+    axis.text.y = element_blank(),
+    # But customize labels for the horizontal axis
+    axis.text.x = element_text(family = "Econ Sans Cnd", size = 12)) + 
+  geom_text(aes(x = perc, y = taxa, label = taxa),
+    hjust = 0,
+    nudge_x = 0.3,
+    colour = "dodgerblue4",
+    family = "Econ Sans Cnd",
+    size = 3.5)+
+  labs(subtitle = "Percent of sum from all articles (%)") + 
+  theme(plot.subtitle = element_text(
+      family = "Econ Sans Cnd",
+      size = 13)
+  )
+
+taxa_bar
+```
+
 #### Conservation problem being addressed
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 7
+#| fig-height: 7
+
+consv <- codes_LU %>%
+  gather(col, consv_topic, reason1:reason3) %>%
+  subset(select = consv_topic)
+
+consv_s <- consv %>%
+  group_by(consv_topic) %>%
+  filter(consv_topic != "NA") %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  mutate(perc = count/sum(count)*100) 
+
+consv_bar <- ggplot(consv_s) +
+  geom_bar(aes(x = perc, y = reorder(consv_topic, perc)), fill = "dodgerblue4", width = 0.6, stat = "identity")+
+  scale_x_continuous(position = "top", 
+                     expand = c(0,0), 
+                     limits = c(0, 18))+
+  scale_y_discrete(expand = expansion(add = c(0,0))) + 
+  theme(
+    # Set background color to white
+    panel.background = element_rect(fill = "white"),
+    # Set the color and the width of the grid lines for the horizontal axis
+    panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+    # Remove tick marks by setting their length to 0
+    axis.ticks.length = unit(0, "mm"),
+    # Remove the title for both axes
+    axis.title = element_blank(),
+    # Only left line of the vertical axis is painted in black
+    axis.line.y.left = element_line(color = "black"),
+    # Remove labels from the vertical axis
+    axis.text.y = element_blank(),
+    # But customize labels for the horizontal axis
+    axis.text.x = element_text(family = "Econ Sans Cnd", size = 12)) + 
+  geom_text(aes(x = perc, y = consv_topic, label = consv_topic),
+    hjust = 0,
+    nudge_x = 0.3,
+    colour = "dodgerblue4",
+    family = "Econ Sans Cnd",
+    size = 3.5)+
+  labs(subtitle = "Percent of sum from all articles (%)") + 
+  theme(plot.subtitle = element_text(
+      family = "Econ Sans Cnd",
+      size = 13)
+  )
+
+consv_bar
+```
 :::
 
 ### Code counts/frequencies
