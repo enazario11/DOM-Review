@@ -1,5 +1,6 @@
 ---
 title: "literature coding explore"
+author: "Emily Nazario | UC Santa Cruz | enazario'@'ucsc.edu"
 date: "`r Sys.Date()`"
 format:
  html: 
