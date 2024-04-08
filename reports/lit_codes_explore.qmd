@@ -266,7 +266,7 @@ fsh_shp_bar <- ggplot(fsh_shp_s) +
 fsh_shp_bar
 ```
 
-#### Study species
+#### Study taxa
 
 ```{r}
 #| echo: false
@@ -320,6 +320,62 @@ taxa_bar <- ggplot(spp_s) +
   )
 
 taxa_bar
+```
+
+#### Study species
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 7
+#| fig-height: 12
+
+species_Gs <- codes_LU %>%
+  gather(col, sp_name, species1:species16) %>%
+  subset(select = sp_name)
+
+spp_Gs_s <- species_Gs %>%
+  group_by(sp_name) %>%
+  filter(sp_name != "NA") %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  mutate(perc = count/sum(count)*100) 
+
+sp_bar <- ggplot(spp_Gs_s) +
+  geom_bar(aes(x = perc, y = reorder(sp_name, perc)), fill = "dodgerblue4", width = 0.6, stat = "identity")+
+  scale_x_continuous(position = "top", 
+                     expand = c(0,0), 
+                     limits = c(0, 23))+
+  scale_y_discrete(expand = expansion(add = c(0.5,0.5))) + 
+  theme(
+    # Set background color to white
+    panel.background = element_rect(fill = "white"),
+    # Set the color and the width of the grid lines for the horizontal axis
+    panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+    # Remove tick marks by setting their length to 0
+    axis.ticks.length = unit(0, "mm"),
+    # Remove the title for both axes
+    axis.title = element_blank(),
+    # Only left line of the vertical axis is painted in black
+    axis.line.y.left = element_line(color = "black"),
+    # Remove labels from the vertical axis
+    axis.text.y = element_blank(),
+    # But customize labels for the horizontal axis
+    axis.text.x = element_text(family = "Econ Sans Cnd", size = 12)) + 
+  geom_text(aes(x = perc, y = sp_name, label = sp_name),
+    hjust = 0,
+    nudge_x = 0.3,
+    colour = "dodgerblue4",
+    family = "Econ Sans Cnd",
+    size = 3.5)+
+  labs(subtitle = "Percent of sum from all articles (%)") + 
+  theme(plot.subtitle = element_text(
+      family = "Econ Sans Cnd",
+      size = 13)
+  )
+
+sp_bar
 ```
 
 #### Conservation problem being addressed
@@ -395,10 +451,10 @@ colnames(codes_vars2) <- gsub(x = colnames(codes_vars2), pattern = "\\.", replac
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 code_freq_new <- codes_vars2 %>%
-  mutate(br_pos = as.numeric(if_any(33:48, ~. == 1)), 
-         ba_pos = as.numeric(if_any(49:58, ~. == 1)), 
+  mutate(br_pos = as.numeric(if_any(c(33:48, 59:61), ~. == 1)), 
+         ba_pos = as.numeric(if_any(49:58, ~. == 1)),
          br_dat = as.numeric(if_any(c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency and accessibility", "Abiotic data availability", "Resource use data availability"), ~. == 1)), 
-         br_eco = as.numeric(if_any(c("Expected climate change induced range shifts", "Distinct habitat preferences among species in system", "Highly mobile target species", "Target species is a prey specialist", "Life history information available for target species", "Fine scale management appropriate for target species"), ~. == 1)), 
+         br_eco = as.numeric(if_any(c("Expected climate change induced range shifts", "Distinct habitat preferences among species in system", "Highly mobile target species", "Target species is a prey specialist", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence"), ~. == 1)), 
          br_soc = as.numeric(if_any(c("Resource availability", "Pre existing regulation and management institutions", "Adoption incentives for end users", "Feasibility", "Co management and communication"), ~. == 1)), 
          ba_dat = as.numeric(if_any(c("Implementation costs", "Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use"), ~. == 1)), 
          ba_eco = as.numeric(if_any(c("Need for multispecies management"), ~. == 1)), 
@@ -435,7 +491,7 @@ ggplot(brba_sum, aes(x = code_level,
             position = position_stack(vjust = 0.5),
             color = "black", 
             size = 5) +
-  ylim(-0.6,1)+
+  ylim(-0.7,1)+
   coord_flip() +
   scale_x_discrete() +
   scale_fill_manual(values = c("lightskyblue3", "goldenrod"), labels = c("Barrier frequency", "Bridge frequency")) +
