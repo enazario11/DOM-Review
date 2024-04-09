@@ -436,6 +436,7 @@ consv_bar
 :::
 
 ### Code appearance frequencies across articles (n = 109)
+The proportions reported in these figures represent the percent of papers included these broader code categories or individual codes. Though, if it would be more helpful to report the more fine-scale codes as a percentage of all data/ecological/social codes (i.e., target species data availability made up 60% of all data bridge codes) I could change how these values were calculated.
 
 ::: panel-tabset 
 #### Broader categories
@@ -474,7 +475,7 @@ brba_sum <- code_freq_new %>%
   gather(br_ba, value, c(2,4,6, 8, 10, 12, 14, 16)) %>%
   subset(select = c(br_ba, value)) %>%
   mutate(percent_label = scales::percent(value, accuracy = 1), 
-         percent = if_else(br_ba == "freq_ba" | br_ba == "freq_ba_e" | br_ba == "freq_ba_d" | br_ba == "freq_ba_s", -value, value),
+         percent = if_else(br_ba == "freq_ba" | br_ba == "freq_ba_e" | br_ba == "freq_ba_d" | br_ba == "freq_ba_s", value, -value),
          code_level = if_else(br_ba %in% c("freq_ba", "freq_br"), "Overall bridge or barrier", 
                               if_else(br_ba %in% c("freq_ba_e", "freq_br_e"), "Ecological bridge or barrier", 
                               if_else(br_ba %in% c("freq_ba_d", "freq_br_d"), "Data bridge or barrier",
@@ -484,19 +485,20 @@ brba_sum <- code_freq_new %>%
   group_by(code_level)
 
 brba_sum$code_level <- factor(brba_sum$code_level, levels = c("Social bridge or barrier", "Ecological bridge or barrier", "Data bridge or barrier", "Overall bridge or barrier"))
+brba_sum$code_brba <- factor(brba_sum$code_brba, levels = c("bridge", "barrier"))
 
 ggplot(brba_sum, aes(x = code_level, 
              y = percent,
              fill = code_brba)) +
   geom_col(width = 0.7) +
   geom_text(aes(label = percent_label),
-            position = position_stack(vjust = 0.5),
+            position = position_stack(vjust = 0.65),
             color = "black", 
             size = 5) +
-  ylim(-0.7,1)+
+  ylim(-1,1)+
   coord_flip() +
   scale_x_discrete() +
-  scale_fill_manual(values = c("lightskyblue3", "goldenrod"), labels = c("Barrier frequency", "Bridge frequency")) +
+  scale_fill_manual(values = c("goldenrod", "lightskyblue3"), labels = c("Bridge frequency", "Barrier frequency")) +
   theme_minimal() +
   theme(axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -710,6 +712,8 @@ soc_bar
 ```
 :::
 
+### Code appearance frequencies within code categories
+
 ### Codes vs. study information
 
 ### Code co-occurrence themes
@@ -720,6 +724,7 @@ soc_bar
 #### Bridges codes
 
 #### Barriers codes
+
 :::
 
 ### Keywords and literature type
@@ -728,4 +733,5 @@ soc_bar
 #### Keywords
 
 #### Literature type
+
 :::
