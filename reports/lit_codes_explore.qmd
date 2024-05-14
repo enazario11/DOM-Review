@@ -436,10 +436,12 @@ consv_bar
 :::
 
 ### Code appearance frequencies across articles (n = 109)
-The proportions reported in these figures represent the percent of papers included these broader code categories or individual codes. Though, if it would be more helpful to report the more fine-scale codes as a percentage of all data/ecological/social codes (i.e., target species data availability made up 60% of all data bridge codes) I could change how these values were calculated.
 
-::: panel-tabset 
+The proportions reported in these figures represent the percent of papers included these broader code categories or individual codes.
+
+::: panel-tabset
 #### Broader categories
+
 ```{r}
 #| echo: false
 #| message: false
@@ -514,6 +516,7 @@ ggplot(brba_sum, aes(x = code_level,
 ```
 
 #### Data frequencies
+
 ```{r}
 #| echo: false
 #| message: false
@@ -578,7 +581,8 @@ data_bar
 
 ```
 
-#### Ecological frequencies 
+#### Ecological frequencies
+
 ```{r}
 #| echo: false
 #| message: false
@@ -645,6 +649,7 @@ ecol_bar
 ```
 
 #### Social frequencies
+
 ```{r}
 #| echo: false
 #| message: false
@@ -713,11 +718,12 @@ soc_bar
 :::
 
 ### Code appearance frequencies within code categories
+
 Here, I have plotted the same information as the previous section, but as a percentage of the overall bridges and barriers groupings. For example, data bridges make up 37% of all bridge codes. The same pattern holds for the other sub-panels. For example, on the ecological page, abiotic indicators account for 22% of all ecological bridge codes.
 
-::: panel-tabset 
-
+::: panel-tabset
 #### Broader categories
+
 ```{r}
 #| echo: false
 #| message: false
@@ -774,6 +780,7 @@ ggplot(code_sum, aes(x = code_level,
 ```
 
 #### Data codes
+
 ```{r}
 #| echo: false
 #| message: false
@@ -839,6 +846,7 @@ ggplot(data_sum) +
 ```
 
 #### Ecological codes
+
 ```{r}
 #| echo: false
 #| message: false
@@ -904,6 +912,7 @@ ggplot(eco_sum) +
 ```
 
 #### Social codes
+
 ```{r}
 #| echo: false
 #| message: false
@@ -969,24 +978,78 @@ ggplot(soc_sum) +
 ```
 :::
 
-### Codes vs. study information
-
 ### Code co-occurrence themes
-
-::: panel-tabset
-#### All codes
-
 #### Bridges codes
+This figure depicts how codes from each of the three first degree categories (Ecological, Data, and Social) co-occurred together. This figure only includes the top 5 combinations of code co-occurrence and only includes "bridge" codes. A figure for the barrier's codes was not completed as no combination of barriers surpassed 3 replicate occurrences. 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 7
+#| fig-align: center
 
-#### Barriers codes
+#change codes to new names 
+  #code_freq
+    #sp br  
+occur_br$Species.Bridges <- replace(occur_br$Species.Bridges, occur_br$Species.Bridges == "Limited Prey Resources", "Target species is a prey specialist")
+occur_br$Species.Bridges <- replace(occur_br$Species.Bridges, occur_br$Species.Bridges == "Fine Scale management required", "Fine-scale management appropriate for target species")
+occur_br$Species.Bridges <- replace(occur_br$Species.Bridges, occur_br$Species.Bridges == "Migratory and/or dynamic range", "Highly mobile target species")
+occur_br$Species.Bridges[occur_br$code_cat == "Ecological bridge" & occur_br$Species.Bridges == "Climate change"] <- "Expected climate change induced range shifts"
+occur_br$Species.Bridges <- replace(occur_br$Species.Bridges, occur_br$Species.Bridges == "Known Species Nat History", "Life history information available for target species")
+occur_br$Species.Bridges <- replace(occur_br$Species.Bridges, occur_br$Species.Bridges == "Distinct Habitat between target and non-target species", "Distinct habitat preferences among species in system")
 
-:::
+    #data br
+occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Advances in Tech", "Access to advanced technology and techniques")
+occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Scale appropriate for system", "Management scale aligns with system needs")
+occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Open-Access Public Data", "Data transparency and accessibility")
+occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Availability for species", "Target species data availability")
+occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Stakeholder/Anthropogenic Data Access", "Resource use data availability")
+occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Enviro Access", "Abiotic data availability")
 
-### Keywords and literature type
+    #soc br
+occur_br$Social.Bridges <- replace(occur_br$Social.Bridges, occur_br$Social.Bridges == "Open Communication or Co-Mngmt in place", "Co-management and communication")
+occur_br$Social.Bridges <- replace(occur_br$Social.Bridges, occur_br$Social.Bridges == "Adoption Interests & Incentives", "Adoption incentives for end users")
+occur_br$Social.Bridges <- replace(occur_br$Social.Bridges, occur_br$Social.Bridges == "Pre-existing regulation & management institutions", "Pre-existing regulation and management institutions")
+occur_br$Social.Bridges <- replace(occur_br$Social.Bridges, occur_br$Social.Bridges == "DOM implementation feasible (Socio-econ)", "Feasibility")
+occur_br$Social.Bridges <- replace(occur_br$Social.Bridges, occur_br$Social.Bridges == "Resource Availability (economical)", "Resource availability")
 
-::: panel-tabset
-#### Keywords
+occur_br <- occur_br %>%
+  mutate(names_comb = paste(Data.Bridge, Species.Bridges, Social.Bridges, sep = "; "))
 
-#### Literature type
+occur_br_fig <- ggplot(head(occur_br)) +
+  geom_bar(aes(x = Documents, y = reorder(names_comb, Documents)), fill = "dodgerblue4", width = 0.6, stat = "identity")+
+  scale_x_continuous(position = "top", 
+                     expand = c(0,0), 
+                     limits = c(0, 15))+
+  scale_y_discrete(expand = expansion(add = c(0.5,0.5))) + 
+  theme(
+    # Set background color to white
+    panel.background = element_rect(fill = "white"),
+    # Set the color and the width of the grid lines for the horizontal axis
+    panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+    # Remove tick marks by setting their length to 0
+    axis.ticks.length = unit(0, "mm"),
+    # Remove the title for both axes
+    axis.title = element_blank(),
+    # Only left line of the vertical axis is painted in black
+    axis.line.y.left = element_line(color = "black"),
+    # Remove labels from the vertical axis
+    axis.text.y = element_text(size = 9),
+    # But customize labels for the horizontal axis
+    axis.text.x = element_text(family = "Econ Sans Cnd", size = 12)) + 
+  geom_text(aes(x = Documents, y = names_comb, label = Documents),
+    hjust = 0,
+    nudge_x = 0.3,
+    colour = "dodgerblue4",
+    family = "Econ Sans Cnd",
+    size = 3.5)+
+  theme(plot.subtitle = element_text(
+      family = "Econ Sans Cnd",
+      size = 13)
+  )
 
-:::
+
+occur_br_fig
+
+```
