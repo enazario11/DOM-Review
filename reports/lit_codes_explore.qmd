@@ -33,6 +33,7 @@ keywords <- read.csv(here("data/keywords_032224.csv"))
 occur_all <- read.csv(here("data/code_configs_all_032224.csv"))
 occur_br <- read.csv(here("data/code_configs_bridges_032224.csv"))
 occur_ba <- read.csv(here("data/code_configs_barriers_032224.csv"))
+code_rel <- read.csv(here("data/code_rel.csv"))
 
 #change codes to new names 
   #code_freq
@@ -979,77 +980,375 @@ ggplot(soc_sum) +
 :::
 
 ### Code co-occurrence themes
-#### Bridges codes
-This figure depicts how codes from each of the three first degree categories (Ecological, Data, and Social) co-occurred together. This figure only includes the top 5 combinations of code co-occurrence and only includes "bridge" codes. A figure for the barrier's codes was not completed as no combination of barriers surpassed 3 replicate occurrences. 
+
+::: panel-tabset
+
+#### All code relations
+This is a heatmap of all code relationships within articles. The number of co-ocurrences represents the number of times two codes co-occurered together in the same article.
+
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
-#| fig-width: 10
-#| fig-height: 7
+#| fig-width: 15
+#| fig-height: 12
 #| fig-align: center
 
-#change codes to new names 
-  #code_freq
-    #sp br  
-occur_br$Species.Bridges <- replace(occur_br$Species.Bridges, occur_br$Species.Bridges == "Limited Prey Resources", "Target species is a prey specialist")
-occur_br$Species.Bridges <- replace(occur_br$Species.Bridges, occur_br$Species.Bridges == "Fine Scale management required", "Fine-scale management appropriate for target species")
-occur_br$Species.Bridges <- replace(occur_br$Species.Bridges, occur_br$Species.Bridges == "Migratory and/or dynamic range", "Highly mobile target species")
-occur_br$Species.Bridges[occur_br$code_cat == "Ecological bridge" & occur_br$Species.Bridges == "Climate change"] <- "Expected climate change induced range shifts"
-occur_br$Species.Bridges <- replace(occur_br$Species.Bridges, occur_br$Species.Bridges == "Known Species Nat History", "Life history information available for target species")
-occur_br$Species.Bridges <- replace(occur_br$Species.Bridges, occur_br$Species.Bridges == "Distinct Habitat between target and non-target species", "Distinct habitat preferences among species in system")
+code_rel_melt <- reshape::melt(code_rel)
+code_rel_melt$variable <- gsub(".", " ", code_rel_melt$variable, fixed = TRUE)
 
-    #data br
-occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Advances in Tech", "Access to advanced technology and techniques")
-occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Scale appropriate for system", "Management scale aligns with system needs")
-occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Open-Access Public Data", "Data transparency and accessibility")
-occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Availability for species", "Target species data availability")
-occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Stakeholder/Anthropogenic Data Access", "Resource use data availability")
-occur_br$Data.Bridge <- replace(occur_br$Data.Bridge, occur_br$Data.Bridge == "Enviro Access", "Abiotic data availability")
+code_rel_melt <- code_rel_melt %>%
+  separate(Code.System, c("key", "code1"), "> ", convert = TRUE) 
 
-    #soc br
-occur_br$Social.Bridges <- replace(occur_br$Social.Bridges, occur_br$Social.Bridges == "Open Communication or Co-Mngmt in place", "Co-management and communication")
-occur_br$Social.Bridges <- replace(occur_br$Social.Bridges, occur_br$Social.Bridges == "Adoption Interests & Incentives", "Adoption incentives for end users")
-occur_br$Social.Bridges <- replace(occur_br$Social.Bridges, occur_br$Social.Bridges == "Pre-existing regulation & management institutions", "Pre-existing regulation and management institutions")
-occur_br$Social.Bridges <- replace(occur_br$Social.Bridges, occur_br$Social.Bridges == "DOM implementation feasible (Socio-econ)", "Feasibility")
-occur_br$Social.Bridges <- replace(occur_br$Social.Bridges, occur_br$Social.Bridges == "Resource Availability (economical)", "Resource availability")
+code_rel_melt$key <- str_trim(code_rel_melt$key)
 
-occur_br <- occur_br %>%
-  mutate(names_comb = paste(Data.Bridge, Species.Bridges, Social.Bridges, sep = "; "))
+colnames(code_rel_melt) <- c("brba_code1", "code1", "code2", "total")
 
-occur_br_fig <- ggplot(head(occur_br)) +
-  geom_bar(aes(x = Documents, y = reorder(names_comb, Documents)), fill = "dodgerblue4", width = 0.6, stat = "identity")+
-  scale_x_continuous(position = "top", 
-                     expand = c(0,0), 
-                     limits = c(0, 15))+
-  scale_y_discrete(expand = expansion(add = c(0.5,0.5))) + 
-  theme(
-    # Set background color to white
-    panel.background = element_rect(fill = "white"),
-    # Set the color and the width of the grid lines for the horizontal axis
-    panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
-    # Remove tick marks by setting their length to 0
-    axis.ticks.length = unit(0, "mm"),
-    # Remove the title for both axes
-    axis.title = element_blank(),
-    # Only left line of the vertical axis is painted in black
-    axis.line.y.left = element_line(color = "black"),
-    # Remove labels from the vertical axis
-    axis.text.y = element_text(size = 9),
-    # But customize labels for the horizontal axis
-    axis.text.x = element_text(family = "Econ Sans Cnd", size = 12)) + 
-  geom_text(aes(x = Documents, y = names_comb, label = Documents),
-    hjust = 0,
-    nudge_x = 0.3,
-    colour = "dodgerblue4",
-    family = "Econ Sans Cnd",
-    size = 3.5)+
-  theme(plot.subtitle = element_text(
-      family = "Econ Sans Cnd",
-      size = 13)
-  )
+ggplot(code_rel_melt, aes(reorder(code1, -total), reorder(code2, total))) +
+geom_tile(aes(fill = total)) + 
+scale_fill_gradient2(high = "red")+
+ylab("")+
+xlab("")+
+labs(fill = "Number of co-occurences")+
+theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 14))+
+geom_text(aes(label = total))
+```
 
+#### Most frequent code relations
+This heatmap represents the same data set as the last figure, but only includes co-occurrence values greater than or equal to 6, which is the 75% quantile of the co-occurrence totals. I have also added boxes around totals greater than 11, which was the 90% quantile of the co-occurrence total data set. Blue text represents data bridges and barriers, grey text represents ecological bridges and barriers, and orange text represents social bridges and barriers. 
 
-occur_br_fig
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 12
+#| fig-height: 10
+#| fig-align: center
+
+#add brba column to second code col
+code_rel_melt2 <- code_rel_melt
+code_rel_melt2$brba_code2 <- NA
+
+code_rel_melt2$code2[code_rel_melt2$code2 == "Fine scale management appropriate for target species"] <- "Fine-scale management appropriate for target species"
+code_rel_melt2$code2[code_rel_melt2$code2 == "Pre existing regulation and management institutions"] <- "Pre-existing regulation and management institutions"
+code_rel_melt2$code2[code_rel_melt2$code2 == "Co management and communication"] <- "Co-management and communication"
+
+for(i in 1:nrow(code_rel_melt2)){
+  code_temp = code_rel_melt2$code2[i]
+
+  brba_temp = code_rel_melt2 %>% filter(code1 == code_temp & code2 == code_temp)
+  brba_code_temp = brba_temp$brba_code1[1]
+
+  code_rel_melt2$brba_code2[i] <- brba_code_temp
+}
+
+code_rel_melt2$brba_code2[code_rel_melt2$code2 == "Target species is a prey specialist"] <- "Ecological bridge"
+
+group_colors = c("Data Bridge" = "dodgerblue4", "Data Barrier" = "dodgerblue4", "Ecological Bridge" = "honeydew4", "Ecological Barrier" = "honeydew4", "Social Bridge" = "darkorange4", "Social Barrier" = "darkorange4")
+
+code_rel_melt_h <- code_rel_melt2 %>%
+  filter(total >= 6) %>%
+  mutate(bor_box = ifelse(total >= 11, "TRUE", "FALSE"), 
+        bor_box = as.factor(bor_box), 
+        code1 = as.factor(code1), 
+        code2 = as.factor(code2))
+
+code_rel_melt_h$bor_box <- factor(code_rel_melt_h$bor_box, levels = c("TRUE", "FALSE"))
+
+code_rel_melt_h <- code_rel_melt_h %>%
+  mutate(code1 = reorder(code1, -total, FUN = mean),
+         code2 = reorder(code2, total, FUN = mean))
+
+unique_x_groups <- code_rel_melt_h %>%
+distinct(code1, brba_code1) %>%
+arrange(code1)
+
+unique_y_groups <- code_rel_melt_h %>%
+distinct(code2, brba_code2) %>%
+arrange(code2)
+
+x_colors <- setNames(group_colors[unique_x_groups$brba_code1], unique_x_groups$code1)
+y_colors <- setNames(group_colors[unique_y_groups$brba_code2], unique_y_groups$code2)
+
+ggplot(code_rel_melt_h, aes(reorder(code1, -total), reorder(code2, total))) +
+geom_tile(aes(fill = total, colour = bor_box)) + 
+scale_fill_gradient2(high = "red")+
+ylab("")+
+xlab("")+
+labs(fill = "Number of co-occurences")+
+theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 14, face = "bold", color = x_colors[levels(code_rel_melt_h$code1)]), 
+      axis.text.y = element_text(size = 14, face = "bold", color = y_colors[levels(code_rel_melt_h$code2)]))+
+geom_text(aes(label = total))+
+scale_color_manual(values = c("black", "#00000000"))+
+guides(color = "none")
 
 ```
+
+#### Data code relations
+This is a look at the data bridge and barrier code relations. Totals higher than or equal to 14 (90th quantile for data totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges. 
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 12
+#| fig-height: 10
+#| fig-align: center
+
+code_rel_d <- read.csv(here("data/code_rel_d.csv"))
+
+code_rel_melt_d <- reshape::melt(code_rel_d)
+code_rel_melt_d$variable <- gsub(".", " ", code_rel_melt_d$variable, fixed = TRUE)
+
+code_rel_melt_d <- code_rel_melt_d %>%
+  separate(Code.System, c("key", "code1"), "> ", convert = TRUE) 
+
+code_rel_melt_d$key <- str_trim(code_rel_melt_d$key)
+
+colnames(code_rel_melt_d) <- c("brba_code1", "code1", "code2", "total")
+
+code_rel_melt2_d <- code_rel_melt_d
+code_rel_melt2_d$brba_code2 <- NA
+code_rel_melt2_d$brba_key1 <- NA
+code_rel_melt2_d$brba_key2 <- NA
+
+for(i in 1:nrow(code_rel_melt2_d)){
+  code_temp = code_rel_melt2_d$code2[i]
+
+  brba_temp = code_rel_melt2_d %>% filter(code1 == code_temp & code2 == code_temp)
+  brba_code_temp = brba_temp$brba_code1[1]
+
+  code_rel_melt2_d$brba_code2[i] <- brba_code_temp
+
+  if(grepl("Bridge", code_rel_melt2_d$brba_code1[i])){
+      code_rel_melt2_d$brba_key1[i] = "Bridge"
+  } else if(grepl("Barrier", code_rel_melt2_d$brba_code1[i])){
+      code_rel_melt2_d$brba_key1[i] = "Barrier"
+  }
+
+  if(grepl("Bridge", code_rel_melt2_d$brba_code2[i])){
+      code_rel_melt2_d$brba_key2[i] = "Bridge"
+  } else if(grepl("Barrier", code_rel_melt2_d$brba_code2[i])){
+      code_rel_melt2_d$brba_key2[i] = "Barrier"
+  }
+}
+
+code_rel_melt2_d <- code_rel_melt2_d %>%
+  mutate(bor_box = ifelse(total >= 14, "TRUE", "FALSE"), 
+        bor_box = as.factor(bor_box), 
+        code1 = as.factor(code1), 
+        code2 = as.factor(code2))
+
+code_rel_melt2_d$bor_box <- factor(code_rel_melt2_d$bor_box, levels = c("TRUE", "FALSE"))
+
+code_rel_melt2_d <- code_rel_melt2_d %>%
+  mutate(code1 = reorder(code1, -total, FUN = mean),
+         code2 = reorder(code2, total, FUN = mean))
+
+brba_colors <- c("Bridge" = "darkolivegreen", "Barrier" = "red4")
+
+unique_x_groups <- code_rel_melt2_d %>%
+distinct(code1, brba_key1) %>%
+arrange(code1)
+
+unique_y_groups <- code_rel_melt2_d %>%
+distinct(code2, brba_key2) %>%
+arrange(code2)
+
+x_colors <- setNames(brba_colors[unique_x_groups$brba_key1], unique_x_groups$code1)
+y_colors <- setNames(brba_colors[unique_y_groups$brba_key2], unique_y_groups$code2)
+
+ggplot(code_rel_melt2_d, aes(reorder(code1, -total), reorder(code2, total))) +
+geom_tile(aes(fill = total, colour = bor_box)) + 
+scale_fill_gradient2(high = "red")+
+ylab("")+
+xlab("")+
+labs(fill = "Number of co-occurences")+
+theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 14, face = "bold", color = x_colors[levels(code_rel_melt2_d$code1)]), 
+      axis.text.y = element_text(size = 14, face = "bold", color = y_colors[levels(code_rel_melt2_d$code2)]))+
+geom_text(aes(label = total))+
+scale_color_manual(values = c("black", "#00000000"))+
+guides(color = "none")
+
+```
+
+#### Ecological code relations
+This is a look at the ecological bridge and barrier code relations. Totals higher than or equal to 5 (90th quantile for ecological totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges. 
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 12
+#| fig-height: 10
+#| fig-align: center
+
+code_rel_e <- read.csv(here("data/code_rel_e.csv"))
+
+code_rel_melt_e <- reshape::melt(code_rel_e)
+code_rel_melt_e$variable <- gsub(".", " ", code_rel_melt_e$variable, fixed = TRUE)
+
+code_rel_melt_e <- code_rel_melt_e %>%
+  separate(Code.System, c("key", "code1"), "> ", convert = TRUE) 
+
+code_rel_melt_e$key <- str_trim(code_rel_melt_e$key)
+
+colnames(code_rel_melt_e) <- c("brba_code1", "code1", "code2", "total")
+
+code_rel_melt2_e <- code_rel_melt_e
+code_rel_melt2_e$brba_code2 <- NA
+code_rel_melt2_e$brba_key1 <- NA
+code_rel_melt2_e$brba_key2 <- NA
+
+code_rel_melt2_e$code2[code_rel_melt2_e$code2 == "Fine scale management appropriate for target species"] <- "Fine-scale management appropriate for target species"
+code_rel_melt2_e$brba_code2[code_rel_melt2_e$code2 == "Target species is a prey specialist"] <- "Ecological bridge"
+
+for(i in 1:nrow(code_rel_melt2_e)){
+  code_temp = code_rel_melt2_e$code2[i]
+
+  brba_temp = code_rel_melt2_e %>% filter(code1 == code_temp & code2 == code_temp)
+  brba_code_temp = brba_temp$brba_code1[1]
+
+  code_rel_melt2_e$brba_code2[i] <- brba_code_temp
+
+  if(grepl("Bridge", code_rel_melt2_e$brba_code1[i])){
+      code_rel_melt2_e$brba_key1[i] = "Bridge"
+  } else if(grepl("Barrier", code_rel_melt2_e$brba_code1[i])){
+      code_rel_melt2_e$brba_key1[i] = "Barrier"
+  }
+
+  if(grepl("Bridge", code_rel_melt2_e$brba_code2[i])){
+      code_rel_melt2_e$brba_key2[i] = "Bridge"
+  } else if(grepl("Barrier", code_rel_melt2_e$brba_code2[i])){
+      code_rel_melt2_e$brba_key2[i] = "Barrier"
+  }
+}
+code_rel_melt2_e$brba_code2[code_rel_melt2_e$code2 == "Target species is a prey specialist"] <- "Ecological bridge"
+code_rel_melt2_e$brba_key2[code_rel_melt2_e$code2 == "Target species is a prey specialist"] <- "Bridge"
+
+code_rel_melt2_e <- code_rel_melt2_e %>%
+  mutate(bor_box = ifelse(total >= 5, "TRUE", "FALSE"), 
+        bor_box = as.factor(bor_box), 
+        code1 = as.factor(code1), 
+        code2 = as.factor(code2))
+
+code_rel_melt2_e$bor_box <- factor(code_rel_melt2_e$bor_box, levels = c("TRUE", "FALSE"))
+
+code_rel_melt2_e <- code_rel_melt2_e %>%
+  mutate(code1 = reorder(code1, -total, FUN = mean),
+         code2 = reorder(code2, total, FUN = mean))
+
+unique_x_groups <- code_rel_melt2_e %>%
+distinct(code1, brba_key1) %>%
+arrange(code1)
+
+unique_y_groups <- code_rel_melt2_e %>%
+distinct(code2, brba_key2) %>%
+arrange(code2)
+
+x_colors <- setNames(brba_colors[unique_x_groups$brba_key1], unique_x_groups$code1)
+y_colors <- setNames(brba_colors[unique_y_groups$brba_key2], unique_y_groups$code2)
+
+ggplot(code_rel_melt2_e, aes(reorder(code1, -total), reorder(code2, total))) +
+geom_tile(aes(fill = total, colour = bor_box)) + 
+scale_fill_gradient2(high = "red")+
+ylab("")+
+xlab("")+
+labs(fill = "Number of co-occurences")+
+theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 14, face = "bold", color = x_colors[levels(code_rel_melt2_e$code1)]), 
+      axis.text.y = element_text(size = 14, face = "bold", color = y_colors[levels(code_rel_melt2_e$code2)]))+
+geom_text(aes(label = total))+
+scale_color_manual(values = c("black", "#00000000"))+
+guides(color = "none")
+
+```
+
+#### Social code relations
+This is a look at the social bridge and barrier code relations. Totals higher than or equal to 5 (90th quantile for social totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges. 
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 12
+#| fig-height: 10
+#| fig-align: center
+
+code_rel_s <- read.csv(here("data/code_rel_s.csv"))
+
+code_rel_melt_s <- reshape::melt(code_rel_s)
+code_rel_melt_s$variable <- gsub(".", " ", code_rel_melt_s$variable, fixed = TRUE)
+
+code_rel_melt_s <- code_rel_melt_s %>%
+  separate(Code.System, c("key", "code1"), "> ", convert = TRUE) 
+
+code_rel_melt_s$key <- str_trim(code_rel_melt_s$key)
+
+colnames(code_rel_melt_s) <- c("brba_code1", "code1", "code2", "total")
+
+code_rel_melt2_s <- code_rel_melt_s
+code_rel_melt2_s$brba_code2 <- NA
+code_rel_melt2_s$brba_key1 <- NA
+code_rel_melt2_s$brba_key2 <- NA
+
+code_rel_melt2_s$code2[code_rel_melt2_s$code2 == "Pre existing regulation and management institutions"] <- "Pre-existing regulation and management institutions"
+code_rel_melt2_s$code2[code_rel_melt2_s$code2 == "Co management and communication"] <- "Co-management and communication"
+
+for(i in 1:nrow(code_rel_melt2_s)){
+  code_temp = code_rel_melt2_s$code2[i]
+
+  brba_temp = code_rel_melt2_s %>% filter(code1 == code_temp & code2 == code_temp)
+  brba_code_temp = brba_temp$brba_code1[1]
+
+  code_rel_melt2_s$brba_code2[i] <- brba_code_temp
+
+  if(grepl("Bridge", code_rel_melt2_s$brba_code1[i])){
+      code_rel_melt2_s$brba_key1[i] = "Bridge"
+  } else if(grepl("Barrier", code_rel_melt2_s$brba_code1[i])){
+      code_rel_melt2_s$brba_key1[i] = "Barrier"
+  }
+
+  if(grepl("Bridge", code_rel_melt2_s$brba_code2[i])){
+      code_rel_melt2_s$brba_key2[i] = "Bridge"
+  } else if(grepl("Barrier", code_rel_melt2_s$brba_code2[i])){
+      code_rel_melt2_s$brba_key2[i] = "Barrier"
+  }
+}
+
+code_rel_melt2_s <- code_rel_melt2_s %>%
+  mutate(bor_box = ifelse(total >= 5, "TRUE", "FALSE"), 
+        bor_box = as.factor(bor_box), 
+        code1 = as.factor(code1), 
+        code2 = as.factor(code2))
+
+code_rel_melt2_s$bor_box <- factor(code_rel_melt2_s$bor_box, levels = c("TRUE", "FALSE"))
+
+code_rel_melt2_s <- code_rel_melt2_s %>%
+  mutate(code1 = reorder(code1, -total, FUN = mean),
+         code2 = reorder(code2, total, FUN = mean))
+
+unique_x_groups <- code_rel_melt2_s %>%
+distinct(code1, brba_key1) %>%
+arrange(code1)
+
+unique_y_groups <- code_rel_melt2_s %>%
+distinct(code2, brba_key2) %>%
+arrange(code2)
+
+x_colors <- setNames(brba_colors[unique_x_groups$brba_key1], unique_x_groups$code1)
+y_colors <- setNames(brba_colors[unique_y_groups$brba_key2], unique_y_groups$code2)
+
+ggplot(code_rel_melt2_s, aes(reorder(code1, -total), reorder(code2, total))) +
+geom_tile(aes(fill = total, colour = bor_box)) + 
+scale_fill_gradient2(high = "red")+
+ylab("")+
+xlab("")+
+labs(fill = "Number of co-occurences")+
+theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 14, face = "bold", color = x_colors[levels(code_rel_melt2_s$code1)]), 
+      axis.text.y = element_text(size = 14, face = "bold", color = y_colors[levels(code_rel_melt2_s$code2)]))+
+geom_text(aes(label = total))+
+scale_color_manual(values = c("black", "#00000000"))+
+guides(color = "none")
+
+```
+:::

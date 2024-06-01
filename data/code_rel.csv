@@ -1,0 +1,30 @@
+﻿Code System,Management scale aligns with system needs,Target species data availability,Access to advanced technology and techniques,Data transparency and accessibility,Resource use data availability,Abiotic data availability,Resource availability,Pre-existing regulation and management institutions,Adoption incentives for end users,Feasibility,Co-management and communication,Biotic indicators of target species presence,Abiotic indicators of target species presence,Expected climate change induced range shifts,Distinct habitat preferences among species in system,Highly mobile target species,Target species is a prey specialist,Life history information available for target species,Fine-scale management appropriate for target species,Gaps and inaccuracy,Management scales do not align with system needs,Model abuse,Need for multispecies management,Climate change adding uncertainty to target species habitat use,Implementation costs,Indirect socioeconomic consequences,Lack of political administration permanence,Poor communication and outreach,Poor program implementation
+Data Bridge > Management scale aligns with system needs,0,12,3,1,5,8,1,4,4,3,9,3,3,2,0,2,0,9,1,7,5,0,1,2,2,1,2,0,3
+Data Bridge > Target species data availability,0,0,15,4,13,27,3,14,16,11,27,17,22,10,8,19,5,31,5,25,11,2,6,5,10,1,3,2,19
+Data Bridge > Access to advanced technology and techniques,0,0,0,5,5,11,2,8,6,4,16,6,9,7,1,10,1,11,1,14,3,1,1,4,6,2,0,2,8
+Data Bridge > Data transparency and accessibility,0,0,0,0,2,3,1,3,2,1,6,0,2,3,0,4,0,0,0,8,0,1,1,1,3,1,0,1,5
+Data Bridge > Resource use data availability,0,0,0,0,0,7,0,8,5,5,10,2,5,0,3,6,1,10,3,9,2,0,3,0,2,1,0,2,9
+Data Bridge > Abiotic data availability,0,0,0,0,0,0,0,9,7,4,16,10,16,3,3,13,4,16,6,18,5,1,5,5,8,2,1,0,10
+Social Bridge > Resource availability,0,0,0,0,0,0,0,2,4,1,5,1,1,1,1,3,0,3,0,2,1,0,1,0,2,0,0,0,3
+Social Bridge > Pre-existing regulation and management institutions,0,0,0,0,0,0,0,0,8,7,17,2,9,5,1,6,0,8,2,8,1,2,3,2,7,1,0,3,17
+Social Bridge > Adoption incentives for end users,0,0,0,0,0,0,0,0,0,5,20,5,10,3,5,6,2,8,4,11,3,1,4,4,5,1,1,1,12
+Social Bridge > Feasibility,0,0,0,0,0,0,0,0,0,0,6,2,7,2,2,5,1,7,1,7,3,0,2,3,1,2,1,0,9
+Social Bridge > Co-management and communication,0,0,0,0,0,0,0,0,0,0,0,4,14,8,5,11,2,16,2,17,5,2,6,5,11,2,1,3,20
+Ecological Bridge > Biotic indicators of target species presence,0,0,0,0,0,0,0,0,0,0,0,0,13,4,3,9,3,10,4,7,1,0,1,2,4,0,0,0,5
+Ecological Bridge > Abiotic indicators of target species presence,0,0,0,0,0,0,0,0,0,0,0,0,0,7,5,15,4,15,7,17,5,1,4,3,3,1,1,2,14
+Ecological Bridge > Expected climate change induced range shifts,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,6,0,3,0,4,0,2,3,2,4,0,0,1,6
+Ecological Bridge > Distinct habitat preferences among species in system,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,1,4,1,3,2,0,2,1,2,0,0,0,6
+Ecological Bridge > Highly mobile target species,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,14,5,18,6,1,3,3,6,2,1,1,10
+Ecological Bridge > Target species is a prey specialist,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,2,3,0,0,0,1,1,0,0,0,1
+Ecological Bridge > Life history information available for target species,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,18,7,1,3,1,6,1,2,1,12
+Ecological Bridge > Fine-scale management appropriate for target species,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,1,0,1,1,1,1,0,0,3
+Data Barrier > Gaps and inaccuracy,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,2,5,5,9,3,2,1,13
+Data Barrier > Management scales do not align with system needs,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,0,1,2,1,3
+Data Barrier > Model abuse,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,2
+Ecological Barrier > Need for multispecies management,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,0,1,7
+Ecological Barrier > Climate change adding uncertainty to target species habitat use,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,2
+Social Barrier > Implementation costs,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,9
+Social Barrier > Indirect socioeconomic consequences,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3
+Social Barrier > Lack of political administration permanence,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+Social Barrier > Poor communication and outreach,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2
+Social Barrier > Poor program implementation,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
