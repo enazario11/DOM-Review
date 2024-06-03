@@ -1,0 +1,30 @@
+bridge_barr,brba_freq,code_cat,code_freq,code_name,total
+Bridge,97,Data bridge,77,Management scale aligns with system needs,15
+Bridge,97,Data bridge,77,Target species data availability,65
+Bridge,97,Data bridge,77,Access to advanced technology and techniques,34
+Bridge,97,Data bridge,77,Data transparency and accessibility,9
+Bridge,97,Data bridge,77,Abiotic data availability,37
+Bridge,97,Data bridge,77,Resource use data availability,19
+Bridge,97,Social bridge,47,Resource availability,7
+Bridge,97,Social bridge,47,Pre-existing regulation and management institutions,23
+Bridge,97,Social bridge,47,Adoption incentives for end users,26
+Bridge,97,Social bridge,47,Feasibility,16
+Bridge,97,Social bridge,47,Co-management and communication,45
+Bridge,97,Ecological bridge,77,Expected climate change induced range shifts,17
+Bridge,97,Ecological bridge,77,Distinct habitat preferences among species in system,10
+Bridge,97,Ecological bridge,77,Biotic indicators of target species presence,24
+Bridge,97,Ecological bridge,77,Abiotic indicators of target species presence,41
+Bridge,97,Ecological bridge,77,Highly mobile target species,34
+Bridge,97,Ecological bridge,77,Target species is a prey specialist,5
+Bridge,97,Ecological bridge,77,Life history information available for target species,39
+Bridge,97,Ecological bridge,77,Fine-scale management appropriate for target species,12
+Barrier,64,Data barrier,45,Implementation costs,17
+Barrier,64,Data barrier,45,Gaps and inaccuracy,40
+Barrier,64,Data barrier,45,Management scales do not align with system needs,14
+Barrier,64,Data barrier,45,Model abuse,3
+Barrier,64,Ecological barrier,8,Need for multispecies management,10
+Barrier,64,Data barrier,45,Climate change adding uncertainty to target species habitat use,8
+Barrier,64,Social barrier,28,Indirect socioeconomic consequences,4
+Barrier,64,Social barrier,28,Lack of political administration permanence,3
+Barrier,64,Social barrier,28,Poor communication and outreach,3
+Barrier,64,Social barrier,28,Poor program implementation,34
