@@ -132,6 +132,8 @@ bri_codes %>%
   kable_styling()
 ```
 
+![Bridges](C:/Users/nazar/OneDrive/Documents/R/Projects/DOM Review/figures/bridges_old.png){fig-align = "center" width = 70%}
+
 ### Barriers
 
 ```{r}
@@ -149,6 +151,9 @@ bar_codes %>%
   kbl() %>%
   kable_styling()
 ```
+
+![Barriers](C:/Users/nazar/OneDrive/Documents/R/Projects/DOM Review/figures/barriers_old.png){fig-align = "center" width = 70%}
+
 :::
 
 ### Sankey diagram of code heirarchies 
@@ -159,7 +164,7 @@ Here, each of the codes and their subcodes are presented. The presented percenta
 #| message: false
 #| warning: false
 #| fig-width: 15
-#| fig-height: 10
+#| fig-height: 15
 
 sankey_df <- read.csv(here("data/sankey_freq.csv"))
 
@@ -178,7 +183,7 @@ ggplot(data = sankey_df,
   geom_text(stat = "stratum", 
     aes(label = after_stat(stratum)),
     angle = c(90,90,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
-    size = c(7,7,5,5,5,5,5,5,3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,   3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3), 
+    size = c(7,7,5,5,5,5,5,5,4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4), 
     nudge_y = c(0,0,0,0,0,0,0,0,0, #poor communication and outreach
                 0.5, #model abuse
                 1, #lack of political permanance
@@ -499,6 +504,8 @@ consv_bar
 ```
 :::
 
+### Code metadata vs. code frequencies 
+
 ### Code appearance frequencies across articles (n = 109)
 
 The proportions reported in these figures represent the percent of papers included these broader code categories or individual codes.
@@ -516,7 +523,6 @@ The proportions reported in these figures represent the percent of papers includ
 
 codes_vars2 = codes_vars
 colnames(codes_vars2) <- gsub(x = colnames(codes_vars2), pattern = "\\.", replacement = " ")
-  
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 code_freq_new <- codes_vars2 %>%
