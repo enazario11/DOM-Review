@@ -85,6 +85,8 @@ code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Cost
 
 ```
 
+
+
 # Literature Review
 
 ## Selecting the literature that was included in this systematic review
@@ -120,6 +122,8 @@ Two reviewers went through each of the 109 articles to identify text that was re
 ::: panel-tabset
 ### Bridges
 
+
+
 ```{r}
 #| echo: false
 #| message: false
@@ -136,9 +140,13 @@ bri_codes %>%
   kable_styling()
 ```
 
+
+
 ![](images/bridges_old.png){fig-align="center" width="70%"}
 
 ### Barriers
+
+
 
 ```{r}
 #| echo: false
@@ -156,12 +164,16 @@ bar_codes %>%
   kable_styling()
 ```
 
+
+
 ![](images/barriers_old.png){fig-align="center" width="70%"}
 :::
 
 ### Sankey diagram of literature code heirarchies
 
 Here, each of the codes and their subcodes are presented. The presented percentages represent totals across all codes and codes closer to the top are codes that make up higher percentages of identified codes.
+
+
 
 ```{r}
 #| echo: false
@@ -220,6 +232,8 @@ ggplot(data = sankey_df,
 
 ```
 
+
+
 ## Visualizing the literature bridges and barrier codes 
 
 Below is a first attempt at how to visualize some of the data collected from this review. This first section represents general information about the articles selected for this review (e.g., study location, fisheries or shipping channels involved, species for which the tool or management program was established for). Most of these plots may instead go in the supplemental materials or aid with interpretation.
@@ -228,6 +242,8 @@ Below is a first attempt at how to visualize some of the data collected from thi
 
 ::: panel-tabset
 #### Study regions
+
+
 
 ```{r}
 #| echo: false
@@ -282,7 +298,11 @@ reg_bar <- ggplot(reg_s) +
 reg_bar
 ```
 
+
+
 #### Study fisheries and shipping channels
+
+
 
 ```{r}
 #| echo: false
@@ -339,7 +359,11 @@ fsh_shp_bar <- ggplot(fsh_shp_s) +
 fsh_shp_bar
 ```
 
+
+
 #### Study taxa
+
+
 
 ```{r}
 #| echo: false
@@ -395,7 +419,11 @@ taxa_bar <- ggplot(spp_s) +
 taxa_bar
 ```
 
+
+
 #### Study species
+
+
 
 ```{r}
 #| echo: false
@@ -451,7 +479,11 @@ sp_bar <- ggplot(spp_Gs_s) +
 sp_bar
 ```
 
+
+
 #### Conservation problem being addressed
+
+
 
 ```{r}
 #| echo: false
@@ -506,6 +538,8 @@ consv_bar <- ggplot(consv_s) +
 
 consv_bar
 ```
+
+
 :::
 
 ### Code appearance frequencies across articles (n = 109)
@@ -514,6 +548,8 @@ The proportions reported in these figures represent the percent of papers that m
 
 ::: panel-tabset
 #### Broader categories
+
+
 
 ```{r}
 #| echo: false
@@ -587,7 +623,11 @@ ggplot(brba_sum, aes(x = code_level,
   guides(fill = guide_legend(nrow = 1))
 ```
 
+
+
 #### Data frequencies
+
+
 
 ```{r}
 #| echo: false
@@ -653,7 +693,11 @@ data_bar
 
 ```
 
+
+
 #### Ecological frequencies
+
+
 
 ```{r}
 #| echo: false
@@ -720,7 +764,11 @@ ecol_bar
 
 ```
 
+
+
 #### Social frequencies
+
+
 
 ```{r}
 #| echo: false
@@ -787,6 +835,8 @@ soc_bar <- ggplot(soc_freq) +
 soc_bar
 
 ```
+
+
 :::
 
 ### Code appearance frequencies within code categories
@@ -795,6 +845,8 @@ Here, I have plotted the same information as the previous section, but as a perc
 
 ::: panel-tabset
 #### Broader categories
+
+
 
 ```{r}
 #| echo: false
@@ -851,7 +903,11 @@ ggplot(code_sum, aes(x = code_level,
 
 ```
 
+
+
 #### Data codes
+
+
 
 ```{r}
 #| echo: false
@@ -917,7 +973,11 @@ ggplot(data_sum) +
 
 ```
 
+
+
 #### Ecological codes
+
+
 
 ```{r}
 #| echo: false
@@ -983,7 +1043,11 @@ ggplot(eco_sum) +
 
 ```
 
+
+
 #### Social codes
+
+
 
 ```{r}
 #| echo: false
@@ -1048,6 +1112,8 @@ ggplot(soc_sum) +
   facet_wrap(~code_cat, scales = "free", nrow = 2)
 
 ```
+
+
 :::
 
 ### Code co-occurrence themes
@@ -1058,6 +1124,8 @@ Could consider including code co-occurrence themes as a heat map, or could list 
 #### All code relations
 
 This is a heatmap of all code relationships within articles. The number of co-ocurrences represents the number of times two codes co-occurered together in the same article.
+
+
 
 ```{r}
 #| echo: false
@@ -1087,9 +1155,13 @@ theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 14))+
 geom_text(aes(label = total))
 ```
 
+
+
 #### Most frequent code relations
 
 This heatmap represents the same data set as the last figure, but only includes co-occurrence values greater than or equal to 6, which is the 75% quantile of the co-occurrence totals. I have also added boxes around totals greater than 11, which was the 90% quantile of the co-occurrence total data set. Blue text represents data bridges and barriers, grey text represents ecological bridges and barriers, and orange text represents social bridges and barriers.
+
+
 
 ```{r}
 #| echo: false
@@ -1159,9 +1231,13 @@ guides(color = "none")
 
 ```
 
+
+
 #### Data code relations
 
 This is a look at the data bridge and barrier code relations. Totals higher than or equal to 14 (90th quantile for data totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges.
+
+
 
 ```{r}
 #| echo: false
@@ -1248,9 +1324,13 @@ guides(color = "none")
 
 ```
 
+
+
 #### Ecological code relations
 
 This is a look at the ecological bridge and barrier code relations. Totals higher than or equal to 5 (90th quantile for ecological totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges.
+
+
 
 ```{r}
 #| echo: false
@@ -1340,9 +1420,13 @@ guides(color = "none")
 
 ```
 
+
+
 #### Social code relations
 
 This is a look at the social bridge and barrier code relations. Totals higher than or equal to 5 (90th quantile for social totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges.
+
+
 
 ```{r}
 #| echo: false
@@ -1429,4 +1513,7 @@ scale_color_manual(values = c("black", "#00000000"))+
 guides(color = "none")
 
 ```
+
+
 :::
+
