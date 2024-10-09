@@ -87,7 +87,7 @@ code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Cost
 
 ## Selecting the literature that was included in this systematic review
 
-In June 2022 a systematic search was completed using Web of Science to identify articles that mentioned factors that either contributed to "successful" implementation of dynamic ocean management (DOM), hereafter referred to as a "bridge". Literature that discussed factors that would need to be addressed or considered prior to effective implementation of dynamic management approaches or tools were also included, hereafter referred to as a "barrier". In this systematic review, we coded bridges and barriers that were related to DOM voluntary programs and/or enforced regulations, as well as those that were related to tool development (e.g., species spatial modeling tools such as EcoCast) that support dynamic management approaches.
+In June 2022, a systematic search was completed using Web of Science to identify articles that discussed dynamic ocean management (DOM). Specifically, articles were selected if they described factors contributing to the “success” of DOM, also termed here as a “bridge”, or that noted factors that should be addressed prior to using DOM approaches or support tools, also termed here as “barriers”. In this systematic review, we coded bridges and barriers that were related to implemented or recommended DOM voluntary programs and/or enforced regulations, as well as those that were related to tool development (e.g., species spatial modeling tools such as EcoCast) that support dynamic management approaches.
 
 During the initial search, the following table of primary and secondary terms were used:
 
@@ -100,18 +100,18 @@ During the initial search, the following table of primary and secondary terms we
 | Bycatch reduction          |                |
 | Habitat preference         |                |
 
-A search was completed in Web of Science for each combination of primary and secondary terms. Works from the primary (i.e., peer reviewed journals) and grey (e.g., theses, book chapters) were included, and this initial search resulted in 1,351 articles. The abstracts for each of these documents were scanned for relevance, and the inclusion of the terms 'dynamic' or 'adaptive' management were confirmed. From this cut, a remaining 127 articles were saved. An additional search through the NOAA Institutional Repository and Federal Register was also completed. Here, documents such as policy reports and planning documents were selected. This search resulted in 795 documents. The abstracts or content summaries for each of these documents were scanned for relevance, and 10 articles were saved for a full read through to determine final inclusion. Inclusion and exclusion criteria for both queries are described here:
+AA search was completed for each combination of primary and secondary terms (Table 1). Works from the primary (i.e., peer-reviewed journals) and grey literature (e.g., theses, book chapters) were included, and this initial search resulted in 1,351 articles. The abstracts for each of these documents were skimmed for relevance, and the inclusion of the terms ‘dynamic’ or ‘adaptive’ management were confirmed. From this cut, a remaining 127 articles were saved. An additional search using the NOAA Institutional Repository and Federal Register was also completed. Here, documents such as policy reports and planning documents were selected. This search resulted in 795 documents. The abstracts or content summaries for each of these documents were skimmed for relevance, and 10 articles were saved for a full read-through to determine final inclusion. Articles were excluded if DOM was mentioned or recommended, but there was no discussion as to why. Articles were also excluded if they discussed changes or updates to environmental data sources or remote sensing tools used to develop models supporting DOM, but DOM approaches were not specifically applied, recommended, or reviewed. Specific inclusion and exclusion criteria are described here:
 
-| Inclusion                                                                                                                                                                                                  | Exclusion                                                                                                                                                                                                    |
+| Inclusion | Exclusion |
 |------------------------------------|:-----------------------------------|
-| All cases where adaptive or near-real time forms of management or tools that support this form of management were discussed, even if the specific term 'Dynamic Ocean Management' was not explicitly used. | The term 'DOM' was mentioned, or even recommended, but there was no discussion as to why (e.g. SDM studies that suggest DOM applications as a next step for their model)                                     |
-| All cases where near real-time SDM tools or fleet-wide communication to avoid negative species interactions.                                                                                               | Articles that involved changes or updates to environmental data stores or remote sensing tools used for developing SDM tools to support DOM, but DOM was not specifically applied, recommended, or reviewed. |
+| All cases where adaptive or near-real time forms of management or tools that support this form of management were discussed, even if the specific term 'Dynamic Ocean Management' was not explicitly used. | The term 'DOM' was mentioned, or even recommended, but there was no discussion as to why (e.g. SDM studies that suggest DOM applications as a next step for their model) |
+| All cases where near real-time SDM tools or fleet-wide communication to avoid negative species interactions. | Articles that involved changes or updates to environmental data stores or remote sensing tools used for developing SDM tools to support DOM, but DOM was not specifically applied, recommended, or reviewed. |
 
-The final list of included works consisted of 137 documents. Each of these were fully read by two reviewers and went through a final pass for determining inclusion. Additional snowball sampling was performed to identify and include articles that were referenced in this list. The abstracts of these referenced articles were read and their inclusion was determined. Lastly, the search ended in August 2023 and articles or documents published after this date were not included in this review. The final list of works analyzed for the review included 110 articles (i.e., primary literature, student theses, policy reports, textbook chapters).
+The 137 articles were read by two reviewers and went through a final pass for determining inclusion. Articles that were referenced that seemed to discuss relevant topics were skimmed and their inclusion was determined. The search ended in August 2023, and articles or documents published after this date were not included in this review. The final list of works analyzed for the review included 109 articles (i.e., primary literature, student theses, policy reports, and textbook chapters).
 
 ## Coding the bridges and barriers as identified in the literature
 
-Two reviewers went through each of the 110 articles to identify pieces of text that were related to DOM bridges that were linked to the approaches success or were used as justification when systems recommended its adoption. The reviewers also identified the barriers that hindered the efficacy of DOM or must be considered prior to it's broader application. Through this effort, 19 "bridge" and 10 "barrier" categories were determined. For both the bridge and barrier code categories, three larger "umbrella" groups were established: species, social, and data. A table of the full list of codes/themes are depicted here. Please note that this is a draft of codes, and thus we are happy to modify the terminology throughout the study review process.
+Two reviewers went through each of the 109 articles to identify text that was related to DOM bridges that were linked to the approach's success or were used as justification as to why DOM would be a good fit for that system/conservation problem. The reviewers also identified the barriers that hindered the efficacy of DOM or must be considered prior to its application. Through this effort, 19 “bridge” and 10 “barrier” categories were determined in the literature. “Bridge” and “barrier” factors were organized into four broader theme groups: ecological, social, data, or regulation/program. A table of the full list of codes/themes from the literature are depicted here. Please note that this is a draft of codes and that the sunburst diagram needs to be revised. I am also happy to modify the code/factor terminology throughout the study review process.
 
 ::: panel-tabset
 ### Bridges
@@ -132,7 +132,7 @@ bri_codes %>%
   kable_styling()
 ```
 
-![Bridges](C:/Users/nazar/OneDrive/Documents/R/Projects/DOM Review/figures/bridges_old.png){fig-align = "center" width = 70%}
+![](images/bridges_old.png){fig-align="center" width="70%"}
 
 ### Barriers
 
@@ -152,12 +152,12 @@ bar_codes %>%
   kable_styling()
 ```
 
-![Barriers](C:/Users/nazar/OneDrive/Documents/R/Projects/DOM Review/figures/barriers_old.png){fig-align = "center" width = 70%}
-
+![](images/barriers_old.png){fig-align="center" width="70%"}
 :::
 
-### Sankey diagram of code heirarchies 
-Here, each of the codes and their subcodes are presented. The presented percentages represent totals across all codes. 
+### Sankey diagram of code heirarchies
+
+Here, each of the codes and their subcodes are presented. The presented percentages represent totals across all codes and codes closer to the top are codes that make up higher percentages of identified codes.
 
 ```{r}
 #| echo: false
@@ -218,7 +218,7 @@ ggplot(data = sankey_df,
 
 ## Visualizing the bridges and barrier codes from the literature
 
-Below is a first attempt at how to visualize some of the data collected from this review. This first section represents general information about the articles selected for this review (e.g., study location, fisheries or shipping channels involved, species for which the tool or management program was established for).
+Below is a first attempt at how to visualize some of the data collected from this review. This first section represents general information about the articles selected for this review (e.g., study location, fisheries or shipping channels involved, species for which the tool or management program was established for). Most of these plots may instead go in the supplemental materials or aid in interpretation.
 
 ### Study information
 
@@ -504,7 +504,7 @@ consv_bar
 ```
 :::
 
-### Code metadata vs. code frequencies 
+### Code metadata vs. code frequencies
 
 ### Code appearance frequencies across articles (n = 109)
 
@@ -938,14 +938,14 @@ eco_sum <- eco_freq %>%
   mutate(percent_label = scales::percent(value, accuracy = 2))
   
 eco_sum$code_cat <- factor(as.factor(eco_sum$code_cat), levels = c("Ecological bridge", "Ecological barrier"))
-my_labs2 <- c("0", "30")
+my_labs2 <- c("0", "30", "50", "75", "100")
 
 ggplot(eco_sum) +
   geom_bar(aes(x = value, y = reorder(code_name, value), fill = code_cat), width = 0.6, stat = "identity")+
   scale_x_continuous(position = "top", 
-                     limits = c(0,0.35),
+                     limits = c(0,1.1),
                      expand = c(0,0), 
-                     breaks = c(0, 0.3),
+                     breaks = c(0, 0.3, 0.5, 0.75, 1),
                      labels = my_labs2)+
   scale_y_discrete(expand = expansion(add = c(0,0))) +
   tidyquant::theme_tq() +
@@ -1051,8 +1051,8 @@ ggplot(soc_sum) +
 ### Code co-occurrence themes
 
 ::: panel-tabset
-
 #### All code relations
+
 This is a heatmap of all code relationships within articles. The number of co-ocurrences represents the number of times two codes co-occurered together in the same article.
 
 ```{r}
@@ -1084,7 +1084,8 @@ geom_text(aes(label = total))
 ```
 
 #### Most frequent code relations
-This heatmap represents the same data set as the last figure, but only includes co-occurrence values greater than or equal to 6, which is the 75% quantile of the co-occurrence totals. I have also added boxes around totals greater than 11, which was the 90% quantile of the co-occurrence total data set. Blue text represents data bridges and barriers, grey text represents ecological bridges and barriers, and orange text represents social bridges and barriers. 
+
+This heatmap represents the same data set as the last figure, but only includes co-occurrence values greater than or equal to 6, which is the 75% quantile of the co-occurrence totals. I have also added boxes around totals greater than 11, which was the 90% quantile of the co-occurrence total data set. Blue text represents data bridges and barriers, grey text represents ecological bridges and barriers, and orange text represents social bridges and barriers.
 
 ```{r}
 #| echo: false
@@ -1146,7 +1147,8 @@ ylab("")+
 xlab("")+
 labs(fill = "Number of co-occurences")+
 theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 14, face = "bold", color = x_colors[levels(code_rel_melt_h$code1)]), 
-      axis.text.y = element_text(size = 14, face = "bold", color = y_colors[levels(code_rel_melt_h$code2)]))+
+      axis.text.y = element_text(size = 14, face = "bold", color = y_colors[levels(code_rel_melt_h$code2)]), 
+      panel.background = element_blank())+
 geom_text(aes(label = total))+
 scale_color_manual(values = c("black", "#00000000"))+
 guides(color = "none")
@@ -1154,7 +1156,8 @@ guides(color = "none")
 ```
 
 #### Data code relations
-This is a look at the data bridge and barrier code relations. Totals higher than or equal to 14 (90th quantile for data totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges. 
+
+This is a look at the data bridge and barrier code relations. Totals higher than or equal to 14 (90th quantile for data totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges.
 
 ```{r}
 #| echo: false
@@ -1242,7 +1245,8 @@ guides(color = "none")
 ```
 
 #### Ecological code relations
-This is a look at the ecological bridge and barrier code relations. Totals higher than or equal to 5 (90th quantile for ecological totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges. 
+
+This is a look at the ecological bridge and barrier code relations. Totals higher than or equal to 5 (90th quantile for ecological totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges.
 
 ```{r}
 #| echo: false
@@ -1333,7 +1337,8 @@ guides(color = "none")
 ```
 
 #### Social code relations
-This is a look at the social bridge and barrier code relations. Totals higher than or equal to 5 (90th quantile for social totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges. 
+
+This is a look at the social bridge and barrier code relations. Totals higher than or equal to 5 (90th quantile for social totals) are outlined in black.Here, red text represents codes that are barriers, and green text represents codes that are bridges.
 
 ```{r}
 #| echo: false
