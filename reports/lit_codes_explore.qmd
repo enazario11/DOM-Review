@@ -10,6 +10,8 @@ toc: TRUE
 toc-title: "On this page"
 theme: yeti
 fontcolor: "#134f5c"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
@@ -30,13 +32,14 @@ library(ggalluvial)
 library(ggrepel)
 library(forcats)
 
-code_freq <- read.csv(here("data/code_freq_032224.csv"))
-codes_vars <- read.csv(here("data/code_w_vars_032224.csv"))
-keywords <- read.csv(here("data/keywords_032224.csv"))
-occur_all <- read.csv(here("data/code_configs_all_032224.csv"))
-occur_br <- read.csv(here("data/code_configs_bridges_032224.csv"))
-occur_ba <- read.csv(here("data/code_configs_barriers_032224.csv"))
+#lit data
+code_freq <- read.csv(here("data/code_freq.csv"))
+codes_vars <- read.csv(here("data/code_w_vars.csv"))
+keywords <- read.csv(here("data/keywords.csv"))
 code_rel <- read.csv(here("data/code_rel.csv"))
+
+#survey data
+code_vars_s <- read.csv(here("data/surveys/draft_vars.csv"))
 
 #change codes to new names 
   #code_freq
@@ -89,33 +92,31 @@ code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Cost
 
 ## Selecting the literature that was included in this systematic review
 
-In June 2022, a systematic search was started using Web of Science to identify articles that discussed dynamic ocean management (DOM). Specifically, articles were selected if they described factors contributing to the “success” of DOM, also termed here as a “bridge”, or that noted factors that should be addressed prior to using DOM approaches or support tools, also termed here as a “barrier”. In this systematic review, we coded bridges and barriers that were related to implemented or recommended DOM voluntary programs and/or enforced regulations, as well as those that were related to tool development (e.g., species spatial modeling tools such as EcoCast) that support dynamic management approaches.
+In September 2024, a systematic search was completed using Web of Science to identify articles that discussed dynamic ocean management (DOM). Articles or documents published after this date were not included in this review. Articles were selected if they described factors contributing to the “success” of DOM, also termed here as a “bridge”, or that noted factors that should be addressed prior to using DOM approaches or support tools, also termed here as a “barrier”. In this systematic review, we coded bridges and barriers that were related to implemented or recommended DOM voluntary programs and/or enforced regulations, as well as those that were related to tool development (e.g., species spatial modeling tools such as EcoCast) that support dynamic management approaches.
 
-During the initial search, the following table of primary and secondary terms were used:
+During the initial search, the following table of terms were used. The "NEAR/5" operator was used to refine the search and ensure each of the terms in a given character string were found within one word of each other:
 
-| Primary term               | Secondary term |
-|----------------------------|----------------|
-| Dynamic ocean management   | Success        |
-| Dynamic spatial management | Efficiency     |
-| Adaptive management        | Obstacles      |
-| Dynamic closures           | Limitations    |
-| Bycatch reduction          |                |
-| Habitat preference         |                |
+| Search term                |
+|----------------------------|
+| Dynamic ocean management   |
+| Dynamic spatial management |
+| Adaptive ocean management  |
+| Dynamic ocean closures     |
 
-: **Table 1.** List of primary and secondary terms used in the Web of Science search.
+: **Table 1.** List of terms used in the Web of Science search. Where spaces are found between words in a search term, the "NEAR/5" operator was added.
 
-A search was completed for each combination of primary and secondary terms (**Table 1**). Works from the primary (i.e., peer-reviewed journals) and grey literature (e.g., theses, book chapters) were included, and this initial search resulted in 1,351 articles. The abstracts for each of these documents were skimmed for relevance, and following this step, a remaining 127 articles were saved. An additional search using the NOAA Institutional Repository and Federal Register was also completed. Here, documents such as policy reports and planning documents were selected. This search resulted in 795 documents. The abstracts or content summaries for each of these documents were skimmed for relevance, and 10 articles were saved for a full read-through to determine final inclusion. Articles were excluded if DOM was mentioned or recommended, but there was no discussion as to why. Articles were also excluded if they discussed changes or updates to environmental data sources or remote sensing tools used to develop models supporting DOM, but DOM approaches were not specifically applied, recommended, or reviewed. Specific inclusion and exclusion criteria are described here:
+Works from the primary (i.e., peer-reviewed journals) and grey literature (e.g., theses, book chapters) were included, and this initial search resulted in 292 articles. Abstracts were skimmed for relevance, and a total of 141 articles were saved for further inspection An additional search using the NOAA Federal Register was also completed. Here, documents such as policy reports and planning documents were selected. This search resulted in 483 documents. The abstracts or content summaries for each of these documents were skimmed for relevance, and an additional 10 documents were saved for a full read through. Articles were excluded if DOM was mentioned or recommended, but there was no discussion as to why. Articles were also excluded if they discussed changes or updates to environmental data sources or remote sensing tools used to develop models supporting DOM, but DOM approaches were not specifically applied, recommended, or reviewed. Specific inclusion and exclusion criteria are described here:
 
 | Inclusion | Exclusion |
 |------------------------------------|:-----------------------------------|
 | All cases where adaptive or near-real time forms of management or tools that support this form of management were discussed, even if the specific term 'Dynamic Ocean Management' was not explicitly used. | The term 'DOM' was mentioned, or even recommended, but there was no discussion as to why (e.g. SDM studies that suggest DOM applications as a next step for their model) |
 | All cases where near real-time SDM tools or fleet-wide communication to avoid negative species interactions. | Articles that involved changes or updates to environmental data stores or remote sensing tools used for developing SDM tools to support DOM, but DOM was not specifically applied, recommended, or reviewed. |
 
-The 137 articles were read by two reviewers and went through a final pass for determining inclusion. Articles that were referenced that seemed to discuss relevant topics were skimmed and their inclusion was determined. The search ended in August 2023, and articles or documents published after this date were not included in this review. The final list of works analyzed for the review included 109 articles (i.e., primary literature, student theses, policy reports, and textbook chapters).
+The 151 articles were read by two reviewers and went through a final pass for determining inclusion. Articles that were referenced that seemed to discuss relevant topics were skimmed and their inclusion was determined. The final list of works analyzed for the review included 118 articles (i.e., primary literature, student theses, policy reports, and textbook chapters).
 
 ## Coding the bridges and barriers as identified in the literature
 
-Two reviewers went through each of the 109 articles to identify text that was related to DOM bridges that were linked to the approach's success or were used as justification as to why DOM would be a good fit for that system/conservation problem. The reviewers also identified the barriers that hindered the efficacy of DOM or must be considered prior to its application. Through this effort, 19 “bridge” and 10 “barrier” categories were determined in the literature. “Bridge” and “barrier” factors were organized into four broader theme groups: ecological, social, and data. A table of the full list of codes/themes from the literature are depicted here. Please note that this is a draft of codes and that the sunburst diagrams need to be revised. I am also happy to modify the code/factor terminology throughout the study review process.
+Two reviewers went through each of the 118 articles to identify text that was related to DOM bridges that were linked to the approach's success or were used as justification as to why DOM would be a good fit for that system/conservation problem. The reviewers also identified the barriers that hindered the efficacy of DOM or must be considered prior to its application. Through this effort, 19 “bridge” and 10 “barrier” categories were determined in the literature. “Bridge” and “barrier” factors were organized into four broader theme groups: ecological, social, and data. A table of the full list of codes/themes from the literature are depicted here. Please note that this is a draft of codes and that the sunburst diagrams need to be revised. I am also happy to modify the code/factor terminology throughout the study review process.
 
 ::: panel-tabset
 ### Bridges
@@ -170,9 +171,21 @@ Here, each of the codes and their subcodes are presented. The presented percenta
 #| fig-width: 15
 #| fig-height: 15
 
+#calc props for sankey_df csv (fine scale codes are raw totals from code_freq file)
+sum_codes <- sum(code_freq$total) #710 codes
+code_freq %>% 
+  group_by(bridge_barr) %>% 
+  summarise(totals = sum(total))
+
+code_freq %>% 
+  group_by(code_cat) %>% 
+  summarise(totals = sum(total))
+
+
+#load sankey df
 sankey_df <- read.csv(here("data/sankey_freq.csv"))
 
-sankey_df$code_cat <- factor(sankey_df$code_cat, levels = c("Data barrier", "Ecological barrier", "Social barrier", "Data bridge", "Ecological bridge", "Social bridge"))
+sankey_df$code_cat <- factor(sankey_df$code_cat, levels = c("Ecological barrier", "Data barrier", "Social barrier", "Data bridge", "Ecological bridge", "Social bridge"))
 
 sankey_df <- sankey_df %>%
 mutate(sum_codes = sum(total), 
@@ -183,11 +196,11 @@ ggplot(data = sankey_df,
        aes(axis1 = fct_reorder(bridge_barr, -perc_codes), axis2 = fct_reorder(code_cat, -perc_codes), axis3 = fct_reorder(code_name, -perc_codes), y = perc_codes)) +
   geom_alluvium(aes(fill = code_cat, color = code_cat), size = 1.5, alpha = 0.8, width = 0.05) +
   geom_stratum(size = 1.5, color = "grey60", 
-              width = c(1/12,1/12,1/3,1/3,1/3,1/3,1/3,1/3,1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18)) +
+              width = c(1/12,1/12,1/3,1/3,1/3,1/3,1/3,1/3,1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18)) +
   geom_text(stat = "stratum", 
     aes(label = after_stat(stratum)),
-    angle = c(90,90,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
-    size = c(7,7,5,5,5,5,5,5,4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4), 
+    angle = c(90,90,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
+    size = c(7,7,5,5,5,5,5,5,4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4), 
     nudge_y = c(0,0,0,0,0,0,0,0,0, #poor communication and outreach
                 0.5, #model abuse
                 1, #lack of political permanance
@@ -202,9 +215,9 @@ ggplot(data = sankey_df,
                 1.5, #management scale system needs
                 2, #management scale aligns
                 0.8, #feasibility
-                0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0), 
-    nudge_x = c(-0.01,-0.01,0,0,0,0,0,0,0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,   0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05), 
-    hjust = c(0.5, 0.5, 0.5,0.5,0.5,0.5,0.5,0.5,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)) +
+                0,0,0,0,0,0,0,0,0,0,0,0,0,0), 
+    nudge_x = c(-0.01,-0.01,0,0,0,0,0,0,0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,   0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05), 
+    hjust = c(0.5, 0.5, 0.5,0.5,0.5,0.5,0.5,0.5,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)) +
 
   xlim(0.89, 3.6) +
   ylim(-1, 100)+
@@ -220,11 +233,34 @@ ggplot(data = sankey_df,
 
 ```
 
-## Visualizing the literature bridges and barrier codes 
+## Visualizing the literature bridges and barrier codes
 
 Below is a first attempt at how to visualize some of the data collected from this review. This first section represents general information about the articles selected for this review (e.g., study location, fisheries or shipping channels involved, species for which the tool or management program was established for). Most of these plots may instead go in the supplemental materials or aid with interpretation.
 
 ### Study information
+
+#### Article categories
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 7
+#| fig-height: 4
+
+codes_vars$lit_type <- factor(codes_vars$lit_type , levels = c("NOAA Rule", "NMFS Notice", "Book chapter", "Thesis", "Methods", "Perspective", "Review", "Study"))
+
+ggplot(codes_vars, aes(x = "", fill = lit_type))+
+  geom_bar(position = "fill")+
+  xlab("")+
+  theme_minimal()+
+  labs(fill = "Literature category")+
+  ylab("Percentage of articles")+
+  coord_flip()+
+  scale_y_continuous(labels = scales::percent)+
+  scale_fill_manual(values = MetBrewer::met.brewer("Veronese", n = 8))
+
+```
+
 
 ::: panel-tabset
 #### Study regions
@@ -508,7 +544,7 @@ consv_bar
 ```
 :::
 
-### Code appearance frequencies across articles (n = 109)
+### Code appearance frequencies across articles (n = 118)
 
 The proportions reported in these figures represent the percent of papers that mentioned a subcode within these broader code categories at least once.
 
@@ -528,24 +564,24 @@ colnames(codes_vars2) <- gsub(x = colnames(codes_vars2), pattern = "\\.", replac
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 code_freq_new <- codes_vars2 %>%
-  mutate(br_pos = as.numeric(if_any(c(33:48, 59:61), ~. == 1)), 
+  mutate(br_pos = as.numeric(if_any(c(33:48, 59:60), ~. == 1)), 
          ba_pos = as.numeric(if_any(49:58, ~. == 1)),
-         br_dat = as.numeric(if_any(c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency and accessibility", "Abiotic data availability", "Resource use data availability"), ~. == 1)), 
-         br_eco = as.numeric(if_any(c("Expected climate change induced range shifts", "Distinct habitat preferences among species in system", "Highly mobile target species", "Target species is a prey specialist", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence"), ~. == 1)), 
+         br_dat = as.numeric(if_any(c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency and accessibility", "Environmental data availability", "Resource use data availability"), ~. == 1)), 
+         br_eco = as.numeric(if_any(c("Expected climate change induced range shifts", "Distinct habitat preferences among species in system", "Highly mobile target species", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence"), ~. == 1)), 
          br_soc = as.numeric(if_any(c("Resource availability", "Pre existing regulation and management institutions", "Adoption incentives for end users", "Feasibility", "Co management and communication"), ~. == 1)), 
-         ba_dat = as.numeric(if_any(c("Implementation costs", "Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use"), ~. == 1)), 
+         ba_dat = as.numeric(if_any(c("Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use"), ~. == 1)), 
          ba_eco = as.numeric(if_any(c("Need for multispecies management"), ~. == 1)), 
-         ba_soc = as.numeric(if_any(c("Indirect socioeconomic consequences", "Lack of political administration permanence", "Poor communication and outreach", "Poor program implementation"), ~. == 1)))
+         ba_soc = as.numeric(if_any(c("Implementation costs", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Poor communication and outreach", "Poor program implementation"), ~. == 1)))
 
 brba_sum <- code_freq_new %>%
-  summarise(n_br = sum(br_pos), freq_br = n_br/109,
-            n_ba = sum(ba_pos), freq_ba = n_ba/109,
-            n_br_e = sum(br_eco), freq_br_e = n_br_e/109,
-            n_br_d = sum(br_dat), freq_br_d = n_br_d/109,
-            n_br_s = sum(br_soc), freq_br_s = n_br_s/109,
-            n_ba_e = sum(ba_eco), freq_ba_e = n_ba_e/109,
-            n_ba_d = sum(ba_dat), freq_ba_d = n_ba_d/109,
-            n_ba_s = sum(ba_soc), freq_ba_s = n_ba_s/109) %>%
+  summarise(n_br = sum(br_pos), freq_br = n_br/118,
+            n_ba = sum(ba_pos), freq_ba = n_ba/118,
+            n_br_e = sum(br_eco), freq_br_e = n_br_e/118,
+            n_br_d = sum(br_dat), freq_br_d = n_br_d/118,
+            n_br_s = sum(br_soc), freq_br_s = n_br_s/118,
+            n_ba_e = sum(ba_eco), freq_ba_e = n_ba_e/118,
+            n_ba_d = sum(ba_dat), freq_ba_d = n_ba_d/118,
+            n_ba_s = sum(ba_soc), freq_ba_s = n_ba_s/118) %>%
   gather(br_ba, value, c(2,4,6, 8, 10, 12, 14, 16)) %>%
   subset(select = c(br_ba, value)) %>%
   mutate(percent_label = scales::percent(value, accuracy = 1), 
@@ -599,12 +635,12 @@ ggplot(brba_sum, aes(x = code_level,
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 data_freq <- codes_vars2 %>%
-  subset(select = c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency and accessibility", "Abiotic data availability", "Resource use data availability","Implementation costs", "Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use")) %>%
-  gather(category, pres_abs, 1:11) %>%
-  mutate(br_ba = ifelse(category == "Implementation costs" | category == "Gaps and inaccuracy" | category == "Management scales do not align with system needs" | category == "Model abuse" | category == "Climate change adding uncertainty to target species habitat use", "Data barrier", "Data bridge")) %>%
+  subset(select = c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency and accessibility", "Environmental data availability", "Resource use data availability", "Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use")) %>%
+  gather(category, pres_abs, 1:10) %>%
+  mutate(br_ba = ifelse(category == "Gaps and inaccuracy" | category == "Management scales do not align with system needs" | category == "Model abuse" | category == "Climate change adding uncertainty to target species habitat use", "Data barrier", "Data bridge")) %>%
   group_by(category, br_ba)  %>%
   summarise(n = sum(pres_abs), 
-            freq = (n/109)) %>%
+            freq = (n/118)) %>%
   mutate(percent_label = scales::percent(freq, accuracy = 2)) %>%
   group_by(category)
 
@@ -665,12 +701,12 @@ data_bar
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 ecol_freq <- codes_vars2 %>%
-  subset(select = c("Expected climate change induced range shifts", "Distinct habitat preferences among species in system", "Highly mobile target species", "Target species is a prey specialist", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence","Need for multispecies management")) %>%
-  gather(category, pres_abs, 1:9) %>%
+  subset(select = c("Expected climate change induced range shifts", "Distinct habitat preferences among species in system", "Highly mobile target species", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence","Need for multispecies management")) %>%
+  gather(category, pres_abs, 1:8) %>%
   mutate(br_ba = ifelse(category == "Need for multispecies management", "Ecological barrier", "Ecological bridge")) %>%
   group_by(category, br_ba)  %>%
   summarise(n = sum(pres_abs), 
-            freq = (n/109)) %>%
+            freq = (n/118)) %>%
   mutate(percent_label = scales::percent(freq, accuracy = 2)) %>%
   group_by(category)
 
@@ -732,12 +768,12 @@ ecol_bar
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 soc_freq <- codes_vars2 %>%
-  subset(select = c("Resource availability", "Pre existing regulation and management institutions", "Adoption incentives for end users", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Poor communication and outreach", "Poor program implementation")) %>%
+  subset(select = c("Resource availability", "Pre existing regulation and management institutions", "Adoption incentives for end users", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Implementation costs", "Poor communication and outreach", "Poor program implementation")) %>%
   gather(category, pres_abs, 1:9) %>%
-  mutate(br_ba = ifelse(category == "Indirect socioeconomic consequences" | category == "Lack of political administration permanence" | category == "Poor communication and outreach" | category == "Poor program implementation", "Social barrier", "Social bridge")) %>%
+  mutate(br_ba = ifelse(category == "Indirect socioeconomic consequences" | category == "Lack of political administration permanence" | category == "Poor communication and outreach" | category == "Poor program implementation" | category == "Implementation costs", "Social barrier", "Social bridge")) %>%
   group_by(category, br_ba)  %>%
   summarise(n = sum(pres_abs), 
-            freq = (n/109)) %>%
+            freq = (n/118)) %>%
   mutate(percent_label = scales::percent(freq, accuracy = 2)) %>%
   group_by(category)
 
@@ -870,7 +906,7 @@ data_sum <- data_freq %>%
   ungroup() %>%
   group_by(code_name) %>% 
   summarise(value = total/n_total) %>%
-  mutate(code_cat = ifelse(code_name == "Implementation costs" | code_name == "Gaps and inaccuracy" | code_name == "Management scales do not align with system needs" | code_name == "Model abuse" | code_name == "Climate change adding uncertainty to target species habitat use", "Data barrier", "Data bridge")) %>%
+  mutate(code_cat = ifelse(code_name == "Gaps and inaccuracy" | code_name == "Management scales do not align with system needs" | code_name == "Model abuse" | code_name == "Climate change adding uncertainty to target species habitat use", "Data barrier", "Data bridge")) %>%
   mutate(percent_label = scales::percent(value, accuracy = 2))
   
 my_labs <- c("0", "25", "50", "75")
@@ -1002,7 +1038,7 @@ soc_sum <- soc_freq %>%
   ungroup() %>%
   group_by(code_name) %>% 
   summarise(value = total/n_total) %>%
-  mutate(code_cat = ifelse(code_name == "Indirect socioeconomic consequences" | code_name == "Lack of political administration permanence" | code_name == "Poor communication and outreach" | code_name == "Poor program implementation", "Social barrier", "Social bridge")) %>%
+  mutate(code_cat = ifelse(code_name == "Implementation costs" | code_name == "Indirect socioeconomic consequences" | code_name == "Lack of political administration permanence" | code_name == "Poor communication and outreach" | code_name == "Poor program implementation", "Social barrier", "Social bridge")) %>%
   mutate(percent_label = scales::percent(value, accuracy = 2))
   
 soc_sum$code_cat <- factor(as.factor(soc_sum$code_cat), levels = c("Social bridge", "Social barrier"))
@@ -1430,3 +1466,93 @@ guides(color = "none")
 
 ```
 :::
+
+# Surveys
+
+## Survey respondants
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+code_vars_s <- code_vars_s %>% mutate(survey = as.factor(survey))
+code_vars_s$survey <- factor(code_vars_s$survey , levels = c("Shad surveys","WhaleWatch TMMC surveys","WhaleWatch surveys", "Yellowtail surveys"))
+
+ggplot(code_vars_s, aes(x = "", fill = survey))+
+  geom_bar(position = "fill")+
+  xlab("")+
+  theme_minimal()+
+  labs(fill = "Respondant position")+
+  ylab("Percentage of survey respondants")+
+  coord_flip()+
+  scale_y_continuous(labels = scales::percent)+
+  scale_fill_manual(values = MetBrewer::met.brewer("Veronese", n = 4), labels = c("River Herring Avoidance Program", "Whale Safe Southern California", "Whale Safe Northern California", "Yellowtail Flounder Avoidance Program"))
+
+```
+
+
+
+## Respondant positions
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 7
+#| fig-height: 4
+#| fig-align: center
+
+code_vars_pos <- code_vars_s %>%
+  pivot_longer(
+    cols = "pos1":"pos5", 
+    names_to = "pos_number",
+    values_to = "pos_type"
+  )
+
+code_vars_pos <- code_vars_pos %>% mutate(pos_type = as.factor(pos_type))
+code_vars_pos$pos_type <- factor(code_vars_pos$pos_type , levels = c("Vessel operator", "Crew", "Vessel captain", "Fleet manager", "Fishery manager", "Commercial fisherman", "Fishery advisory board member", "Vessel owner", "Fishery scientist", "NA"))
+
+ggplot(code_vars_pos, aes(x = "", fill = pos_type))+
+  geom_bar(position = "fill")+
+  xlab("")+
+  theme_minimal()+
+  labs(fill = "Respondant position")+
+  ylab("Percentage of respondants")+
+  coord_flip()+
+  scale_y_continuous(labels = scales::percent)+
+  scale_fill_manual(values = MetBrewer::met.brewer("Veronese", n = 10))
+
+```
+
+
+## Respondant experience
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: center
+
+ggplot(code_vars_s, aes(x = "", pos_num))+
+  geom_violin(size = 1.5, color = "steelblue4")+
+  geom_jitter(height = 0, width = 0.1, size = 3, color = "steelblue4", alpha = 0.5)+
+  theme_minimal() + 
+  xlab("")+
+  ylab("Number of years in position")+
+  theme(axis.title = element_text(size = 16), 
+        axis.text = element_text(size = 14, color = "black"))
+
+```
+
+
+
+
+
+
+
+

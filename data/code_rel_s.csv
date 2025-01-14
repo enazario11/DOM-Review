@@ -1,13 +1,11 @@
 ﻿Code System,Resource availability,Pre-existing regulation and management institutions,Adoption incentives for end users,Feasibility,Co-management and communication,Implementation costs,Indirect socioeconomic consequences,Lack of political administration permanence,Poor communication and outreach,Poor program implementation
-Social Bridge > Resource availability,0,2,4,1,5,2,0,0,0,3
-Social Bridge > Pre-existing regulation and management institutions,0,0,8,7,17,7,1,0,3,17
-Social Bridge > Adoption incentives for end users,0,0,0,5,20,5,1,1,1,12
-Social Bridge > Feasibility,0,0,0,0,6,1,2,1,0,9
-Social Bridge > Co-management and communication,0,0,0,0,0,11,2,1,3,20
-Barriers,0,0,0,0,0,0,0,0,0,0
-Barriers > Social Barrier,0,0,0,0,0,0,0,0,0,0
-Social Barrier > Implementation costs,0,0,0,0,0,0,0,0,0,9
-Social Barrier > Indirect socioeconomic consequences,0,0,0,0,0,0,0,0,0,3
-Social Barrier > Lack of political administration permanence,0,0,0,0,0,0,0,0,0,1
-Social Barrier > Poor communication and outreach,0,0,0,0,0,0,0,0,0,2
-Social Barrier > Poor program implementation,0,0,0,0,0,0,0,0,0,0
+Social Bridge > Resource availability,0,2,4,1,4,2,0,0,0,3
+Social Bridge > Pre-existing regulation and management institutions,2,0,8,9,15,8,2,3,4,18
+Social Bridge > Adoption incentives for end users,4,8,0,6,17,5,2,1,1,12
+Social Bridge > Feasibility,1,9,6,0,7,3,5,3,1,10
+Social Bridge > Co-management and communication,4,15,17,7,0,10,5,3,4,19
+Social Barrier > Implementation costs,2,8,5,3,10,0,4,1,0,11
+Social Barrier > Indirect socioeconomic consequences,0,2,2,5,5,4,0,1,0,6
+Social Barrier > Lack of political administration permanence,0,3,1,3,3,1,1,0,1,3
+Social Barrier > Poor communication and outreach,0,4,1,1,4,0,0,1,0,3
+Social Barrier > Poor program implementation,3,18,12,10,19,11,6,3,3,0

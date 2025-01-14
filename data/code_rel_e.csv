@@ -1,11 +1,10 @@
-﻿Code System,Biotic indicators of target species presence,Abiotic indicators of target species presence,Expected climate change induced range shifts,Distinct habitat preferences among species in system,Highly mobile target species,Target species is a prey specialist,Life history information available for target species,Fine-scale management appropriate for target species,Need for multispecies management,Climate change adding uncertainty to target species habitat use
-Ecological Bridge > Biotic indicators of target species presence,0,13,4,3,9,3,10,4,1,2
-Ecological Bridge > Abiotic indicators of target species presence,0,0,7,5,15,4,15,7,4,3
-Ecological Bridge > Expected climate change induced range shifts,0,0,0,1,6,0,3,0,3,2
-Ecological Bridge > Distinct habitat preferences among species in system,0,0,0,0,3,1,4,1,2,1
-Ecological Bridge > Highly mobile target species,0,0,0,0,0,3,14,5,3,3
-Ecological Bridge > Target species is a prey specialist,0,0,0,0,0,0,3,2,0,1
-Ecological Bridge > Life history information available for target species,0,0,0,0,0,0,0,4,3,1
-Ecological Bridge > Fine-scale management appropriate for target species,0,0,0,0,0,0,0,0,1,1
-Ecological Barrier > Need for multispecies management,0,0,0,0,0,0,0,0,0,0
-Ecological Barrier > Climate change adding uncertainty to target species habitat use,0,0,0,0,0,0,0,0,0,0
+﻿Code System,Biotic indicators of target species presence,Abiotic indicators of target species presence,Expected climate change induced range shifts,Distinct habitat preferences among species in system,Highly mobile target species,Life history information available for target species,Fine-scale management appropriate for target species,Need for multispecies management,Climate change adding uncertainty to target species habitat use
+Ecological Bridge > Biotic indicators of target species presence,0,2,1,1,1,1,1,1,0
+Ecological Bridge > Abiotic indicators of target species presence,2,0,6,2,11,4,4,3,1
+Ecological Bridge > Expected climate change induced range shifts,1,6,0,1,5,3,2,4,3
+Ecological Bridge > Distinct habitat preferences among species in system,1,2,1,0,1,2,0,2,1
+Ecological Bridge > Highly mobile target species,1,11,5,1,0,3,5,2,3
+Ecological Bridge > Life history information available for target species,1,4,3,2,3,0,2,2,0
+Ecological Bridge > Fine-scale management appropriate for target species,1,4,2,0,5,2,0,1,2
+Ecological Barrier > Need for multispecies management,1,3,4,2,2,2,1,0,0
+Ecological Barrier > Climate change adding uncertainty to target species habitat use,0,1,3,1,3,0,2,0,0

@@ -1,10 +1,10 @@
-﻿Code System,Management scale aligns with system needs,Target species data availability,Access to advanced technology and techniques,Data transparency and accessibility,Resource use data availability,Abiotic data availability,Model abuse,Gaps and inaccuracy,Management scales do not align with system needs
-Data Bridge > Management scale aligns with system needs,0,12,3,1,5,8,0,7,5
-Data Bridge > Target species data availability,0,0,15,4,13,27,2,25,11
-Data Bridge > Access to advanced technology and techniques,0,0,0,5,5,11,1,14,3
-Data Bridge > Data transparency and accessibility,0,0,0,0,2,3,1,8,0
-Data Bridge > Resource use data availability,0,0,0,0,0,7,0,9,2
-Data Bridge > Abiotic data availability,0,0,0,0,0,0,1,18,5
-Data Barrier > Model abuse,0,0,0,0,0,0,0,2,0
-Data Barrier > Gaps and inaccuracy,0,0,0,0,0,0,0,0,7
-Data Barrier > Management scales do not align with system needs,0,0,0,0,0,0,0,0,0
+﻿Code System,Management scale aligns with system needs,Target species data availability,Access to advanced technology and techniques,Data transparency and accessibility,Resource use data availability,Environmental data availability,Model abuse,Gaps and inaccuracy,Management scales do not align with system needs
+Data Bridge > Management scale aligns with system needs,0,10,7,5,6,3,0,9,5
+Data Bridge > Target species data availability,10,0,14,8,7,6,1,16,7
+Data Bridge > Access to advanced technology and techniques,7,14,0,8,7,5,1,14,6
+Data Bridge > Data transparency and accessibility,5,8,8,0,4,3,1,10,1
+Data Bridge > Resource use data availability,6,7,7,4,0,2,0,8,1
+Data Bridge > Environmental data availability,3,6,5,3,2,0,0,6,2
+Data Barrier > Model abuse,0,1,1,1,0,0,0,1,0
+Data Barrier > Gaps and inaccuracy,9,16,14,10,8,6,1,0,8
+Data Barrier > Management scales do not align with system needs,5,7,6,1,1,2,0,8,0
