@@ -39,7 +39,8 @@ keywords <- read.csv(here("data/keywords.csv"))
 code_rel <- read.csv(here("data/code_rel.csv"))
 
 #survey data
-code_vars_s <- read.csv(here("data/surveys/draft_vars.csv"))
+code_vars_s <- read.csv(here("data/surveys/code_w_vars.csv"))
+code_freq_s <- read.csv(here("data/surveys/code_freq.csv"))
 
 #change codes to new names 
   #code_freq
@@ -231,6 +232,8 @@ ggplot(data = sankey_df,
   scale_fill_manual(values = c("#F48136", "#F46036", "#F44336", "#CFE2F3", "#C5E0B4", "#45818E"))+
   scale_color_manual(values = c("#F48136", "#F46036", "#F44336", "#CFE2F3", "#C5E0B4", "#45818E"))
 
+ggsave(here("figures/sankey_tp.svg"), height = 10, width = 10, units = c("in"))
+
 ```
 
 ## Visualizing the literature bridges and barrier codes
@@ -257,7 +260,14 @@ ggplot(codes_vars, aes(x = "", fill = lit_type))+
   ylab("Percentage of articles")+
   coord_flip()+
   scale_y_continuous(labels = scales::percent)+
-  scale_fill_manual(values = MetBrewer::met.brewer("Veronese", n = 8))
+  scale_fill_manual(values = MetBrewer::met.brewer("Veronese", n = 8))+
+  theme(panel.background = element_rect(fill='transparent'),
+         plot.background = element_rect(fill='transparent', color=NA),
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         legend.background = element_rect(fill='transparent'),
+         legend.box.background = element_rect(fill='transparent'))
+#ggsave(here("figures/lit_cat.svg"), width = 8, height = 4, units = c("in"))
 
 ```
 
@@ -1550,7 +1560,558 @@ ggplot(code_vars_s, aes(x = "", pos_num))+
 ```
 
 
+## Code appearance frequencies across surveys (n = 21)
 
+The proportions reported in these figures represent the percent of surveys that mentioned a subcode within these broader code categories at least once.
+
+::: panel-tabset
+#### Broader categories
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 7
+#| fig-align: center
+
+codes_vars_s2 = code_vars_s
+colnames(codes_vars_s2) <- gsub(x = colnames(codes_vars_s2), pattern = "\\.", replacement = " ")
+
+  #calculate frequency of bridges vs. barriers being mentioned in surveys
+code_freq_new_s <- codes_vars_s2 %>%
+  mutate(br_pos = as.numeric(if_any(38:61, ~. == 1)), 
+         ba_pos = as.numeric(if_any(21:37, ~. == 1)),
+         br_reg = as.numeric(if_any(c(38:45), ~. ==1)),
+         br_soc = as.numeric(if_any(c(46:55), ~. == 1)), 
+         br_dat = as.numeric(if_any(c(56:57), ~. == 1)), 
+         br_eco = as.numeric(if_any(c(58:61), ~. == 1)), 
+         ba_reg = as.numeric(if_any(c(21:23), ~. == 1)),
+         ba_dat = as.numeric(if_any(c(24:26), ~. == 1)), 
+         ba_eco = as.numeric(if_any(c(27), ~. == 1)), 
+         ba_soc = as.numeric(if_any(c(28:37), ~. == 1)))
+
+brba_sum_s <- code_freq_new_s %>%
+  summarise(n_br = sum(br_pos), freq_br = n_br/21,
+            n_ba = sum(ba_pos), freq_ba = n_ba/21,
+            n_br_e = sum(br_eco), freq_br_e = n_br_e/21,
+            n_br_d = sum(br_dat), freq_br_d = n_br_d/21,
+            n_br_s = sum(br_soc), freq_br_s = n_br_s/21,
+            n_br_r = sum(br_reg), freq_br_r = n_br_r/21,
+            n_ba_e = sum(ba_eco), freq_ba_e = n_ba_e/21,
+            n_ba_d = sum(ba_dat), freq_ba_d = n_ba_d/21,
+            n_ba_s = sum(ba_soc), freq_ba_s = n_ba_s/21, 
+            n_ba_r = sum(ba_reg), freq_ba_r = n_ba_r/21) %>%  
+  gather(br_ba, value, c(2,4,6, 8, 10, 12, 14, 16, 18, 20)) %>%
+  subset(select = c(br_ba, value)) %>%
+  mutate(percent_label = scales::percent(value, accuracy = 1), 
+         percent = if_else(br_ba == "freq_ba" | br_ba == "freq_ba_e" | br_ba == "freq_ba_d" | br_ba == "freq_ba_s" | br_ba == "freq_ba_r", value, -value),
+         code_level = if_else(br_ba %in% c("freq_ba", "freq_br"), "Overall bridge or barrier", 
+                              if_else(br_ba %in% c("freq_ba_e", "freq_br_e"), "Ecological bridge or barrier", 
+                              if_else(br_ba %in% c("freq_ba_d", "freq_br_d"), "Data bridge or barrier",
+                              if_else(br_ba %in% c("freq_ba_r", "freq_br_r"), "Regulatory bridge or barrier",
+                              if_else(br_ba %in% c("freq_ba_s", "freq_br_s"), "Social bridge or barrier", NA))))),
+         code_brba = if_else(br_ba %in% c("freq_br", "freq_br_e", "freq_br_s", "freq_br_d", "freq_br_r"), "bridge", "barrier"),
+         alpha_brba = if_else(br_ba %in% c("freq_br_e", "freq_br_s", "freq_br_d", "freq_br_r", "freq_ba_e", "freq_ba_s", "freq_ba_d", "freq_ba_r"), "alpha", "no_alpha")) %>%
+  group_by(code_level)
+
+brba_sum_s$code_level <- factor(brba_sum_s$code_level, levels = c("Ecological bridge or barrier", "Data bridge or barrier", "Regulatory bridge or barrier","Social bridge or barrier", "Overall bridge or barrier"))
+brba_sum_s$code_brba <- factor(brba_sum_s$code_brba, levels = c("bridge", "barrier"))
+
+ggplot(brba_sum_s, aes(x = code_level, 
+             y = percent,
+             fill = code_brba)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = percent_label),
+            position = position_stack(vjust = 0.65),
+            color = "black", 
+            size = 5) +
+  ylim(-1,1)+
+  coord_flip() +
+  scale_x_discrete() +
+  scale_fill_manual(values = c("goldenrod", "lightskyblue3"), labels = c("Bridge frequency", "Barrier frequency")) +
+  theme_minimal() +
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x =element_blank(),
+        axis.text.y = element_text(size = 20, color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(-0.21, 0.99),
+        legend.text = element_text(size = 16, color = "black"),
+        strip.text.y.right = element_text(angle = 0, size = 16)) +
+  geom_hline(yintercept = 0.0, linewidth = 1) + 
+  labs(fill = "")+ 
+  guides(fill = guide_legend(nrow = 1))
+```
+
+#### Data frequencies
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 12
+#| fig-height: 10
+#| fig-align: center
+
+  #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
+# data_freq_s <- codes_vars_s2 %>%
+#   subset(select = c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency and accessibility", "Environmental data availability", "Resource use data availability", "Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use")) %>%
+#   gather(category, pres_abs, 1:10) %>%
+#   mutate(br_ba = ifelse(category == "Gaps and inaccuracy" | category == "Management scales do not align with system needs" | category == "Model abuse" | category == "Climate change adding uncertainty to target species habitat use", "Data barrier", "Data bridge")) %>%
+#   group_by(category, br_ba)  %>%
+#   summarise(n = sum(pres_abs), 
+#             freq = (n/118)) %>%
+#   mutate(percent_label = scales::percent(freq, accuracy = 2)) %>%
+#   group_by(category)
+# 
+# my_labs <- c("0", "25", "50", "75")
+# data_freq$br_ba <- factor(as.factor(data_freq$br_ba), levels = c("Data bridge", "Data barrier"))
+# 
+# data_bar <- ggplot(data_freq) +
+#   geom_bar(aes(x = freq, y = reorder(category, freq), fill = br_ba), width = 0.6, stat = "identity")+
+#   scale_x_continuous(position = "top", 
+#                      limits = c(0,0.9),
+#                      expand = c(0,0), 
+#                      breaks = c(0, 0.25, 0.5, 0.75),
+#                      labels = my_labs)+
+#   scale_y_discrete(expand = expansion(add = c(0,0))) +
+#   tidyquant::theme_tq() +
+#   theme(
+#     # Set background color to white
+#     panel.background = element_rect(fill = "white"),
+#     # Set the color and the width of the grid lines for the horizontal axis
+#     panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+#     # Remove tick marks by setting their length to 0
+#     axis.ticks.length = unit(0, "mm"),
+#     # Remove the title for both axes
+#     axis.title = element_blank(),
+#     # Only left line of the vertical axis is painted in black
+#     axis.line.y.left = element_line(color = "black"),
+#     # But customize labels for the horizontal axis
+#     axis.text.x = element_text(family = "Econ Sans Cnd", size = 16), 
+#     axis.text.y = element_text(family = "Econ Sans Cnd", size = 16), 
+#     legend.position = "none", 
+#     strip.text = element_text(size = 16)) + 
+#   geom_text(aes(x = freq, y = category, label = percent_label),
+#     hjust = 0,
+#     nudge_x = -0.0001,
+#     colour = "black",
+#     family = "Econ Sans Cnd",
+#     size = 6)+
+#   labs(subtitle = "Percent of sum from all articles (%)") + 
+#   theme(plot.subtitle = element_text(
+#       family = "Econ Sans Cnd",
+#       size = 20)
+#   ) + 
+#   scale_fill_manual(values = c("goldenrod", "lightskyblue3"))+
+#   facet_wrap(~br_ba, scales = "free", nrow = 2)
+# data_bar
+
+```
+
+#### Ecological frequencies
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 12
+#| fig-height: 10
+#| fig-align: center
+
+  #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
+# ecol_freq <- codes_vars2 %>%
+#   subset(select = c("Expected climate change induced range shifts", "Distinct habitat preferences among species in system", "Highly mobile target species", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence","Need for multispecies management")) %>%
+#   gather(category, pres_abs, 1:8) %>%
+#   mutate(br_ba = ifelse(category == "Need for multispecies management", "Ecological barrier", "Ecological bridge")) %>%
+#   group_by(category, br_ba)  %>%
+#   summarise(n = sum(pres_abs), 
+#             freq = (n/118)) %>%
+#   mutate(percent_label = scales::percent(freq, accuracy = 2)) %>%
+#   group_by(category)
+# 
+# ecol_freq$category <- replace(ecol_freq$category, ecol_freq$category == "Fine scale management appropriate for target species", "Fine-scale management appropriate for target species")
+# ecol_freq$br_ba <- factor(as.factor(ecol_freq$br_ba), levels = c("Ecological bridge", "Ecological barrier"))
+# 
+# ecol_bar <- ggplot(ecol_freq) +
+#   geom_bar(aes(x = freq, y = reorder(category, freq), fill = br_ba), width = 0.6, stat = "identity")+
+#   scale_x_continuous(position = "top", 
+#                      limits = c(0,0.9),
+#                      expand = c(0,0), 
+#                      breaks = c(0, 0.25, 0.5, 0.75),
+#                      labels = my_labs)+
+#   scale_y_discrete(expand = expansion(add = c(0,0))) +
+#   tidyquant::theme_tq() +
+#   theme(
+#     # Set background color to white
+#     panel.background = element_rect(fill = "white"),
+#     # Set the color and the width of the grid lines for the horizontal axis
+#     panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+#     # Remove tick marks by setting their length to 0
+#     axis.ticks.length = unit(0, "mm"),
+#     # Remove the title for both axes
+#     axis.title = element_blank(),
+#     # Only left line of the vertical axis is painted in black
+#     axis.line.y.left = element_line(color = "black"),
+#     # But customize labels for the horizontal axis
+#     axis.text.x = element_text(family = "Econ Sans Cnd", size = 16), 
+#     axis.text.y = element_text(family = "Econ Sans Cnd", size = 16), 
+#     legend.position = "none", 
+#     strip.text = element_text(size = 16)) + 
+#   geom_text(aes(x = freq, y = category, label = percent_label),
+#     hjust = 0,
+#     nudge_x = -0.0001,
+#     colour = "black",
+#     family = "Econ Sans Cnd",
+#     size = 6)+
+#   labs(subtitle = "Percent of sum from all articles (%)") + 
+#   theme(plot.subtitle = element_text(
+#       family = "Econ Sans Cnd",
+#       size = 20)
+#   ) + 
+#   scale_fill_manual(values = c("goldenrod", "lightskyblue3"))+
+#   facet_wrap(~br_ba, scales = "free", nrow = 2)
+# 
+# ecol_bar
+
+```
+
+#### Social frequencies
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 12
+#| fig-height: 10
+#| fig-align: center
+
+  #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
+# soc_freq <- codes_vars2 %>%
+#   subset(select = c("Resource availability", "Pre existing regulation and management institutions", "Adoption incentives for end users", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Implementation costs", "Poor communication and outreach", "Poor program implementation")) %>%
+#   gather(category, pres_abs, 1:9) %>%
+#   mutate(br_ba = ifelse(category == "Indirect socioeconomic consequences" | category == "Lack of political administration permanence" | category == "Poor communication and outreach" | category == "Poor program implementation" | category == "Implementation costs", "Social barrier", "Social bridge")) %>%
+#   group_by(category, br_ba)  %>%
+#   summarise(n = sum(pres_abs), 
+#             freq = (n/118)) %>%
+#   mutate(percent_label = scales::percent(freq, accuracy = 2)) %>%
+#   group_by(category)
+# 
+# soc_freq$category <- replace(soc_freq$category, soc_freq$category == "Co management and communication", "Co-management and communication")
+# soc_freq$category <- replace(soc_freq$category, soc_freq$category == "Pre existing regulation and management institutions", "Pre-existing regulation and management institutions")
+# soc_freq$br_ba <- factor(as.factor(soc_freq$br_ba), levels = c("Social bridge", "Social barrier"))
+# 
+# 
+# soc_bar <- ggplot(soc_freq) +
+#   geom_bar(aes(x = freq, y = reorder(category, freq), fill = br_ba), width = 0.6, stat = "identity")+
+#   scale_x_continuous(position = "top", 
+#                      limits = c(0,0.9),
+#                      expand = c(0,0), 
+#                      breaks = c(0, 0.25, 0.5, 0.75),
+#                      labels = my_labs)+
+#   scale_y_discrete(expand = expansion(add = c(0,0))) +
+#   tidyquant::theme_tq() +
+#   theme(
+#     # Set background color to white
+#     panel.background = element_rect(fill = "white"),
+#     # Set the color and the width of the grid lines for the horizontal axis
+#     panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+#     # Remove tick marks by setting their length to 0
+#     axis.ticks.length = unit(0, "mm"),
+#     # Remove the title for both axes
+#     axis.title = element_blank(),
+#     # Only left line of the vertical axis is painted in black
+#     axis.line.y.left = element_line(color = "black"),
+#     # But customize labels for the horizontal axis
+#     axis.text.x = element_text(family = "Econ Sans Cnd", size = 16), 
+#     axis.text.y = element_text(family = "Econ Sans Cnd", size = 16), 
+#     legend.position = "none", 
+#     strip.text = element_text(size = 16)) + 
+#   geom_text(aes(x = freq, y = category, label = percent_label),
+#     hjust = 0,
+#     nudge_x = -0.0001,
+#     colour = "black",
+#     family = "Econ Sans Cnd",
+#     size = 6)+
+#   labs(subtitle = "Percent of sum from all articles (%)") + 
+#   theme(plot.subtitle = element_text(
+#       family = "Econ Sans Cnd",
+#       size = 20)
+#   ) + 
+#   scale_fill_manual(values = c("goldenrod", "lightskyblue3"))+
+#   facet_wrap(~br_ba, scales = "free", nrow = 2)
+# soc_bar
+
+```
+
+### Regulatory frequencies
+
+:::
+
+## Code appearance frequencies within code categories
+
+Here, I have plotted the same information as the previous section, but as a percentage of the overall bridges and barriers groupings. For example, data bridges make up 37% of all bridge codes. The same pattern holds for the other sub-panels. For example, on the ecological page, abiotic indicators account for 22% of all ecological bridge codes.
+
+::: panel-tabset
+#### Broader categories
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 7
+#| fig-align: center
+
+code_sum_s <- code_freq_s %>%
+  group_by(bridge_barr) %>%
+  mutate(n_total = sum(total)) %>%
+  ungroup() %>%
+  group_by(code_cat) %>% 
+  mutate(n_subtotal = sum(total)) %>%
+  summarise(value = n_subtotal/n_total) %>%
+  rename("br_ba" = code_cat) %>%
+  mutate(percent_label = scales::percent(value, accuracy = 1), 
+         percent = if_else(br_ba == "Data barrier" | br_ba == "Ecological barrier" | br_ba == "Social barrier" | br_ba == "Regulation barrier", value, -value),
+         code_level = if_else(br_ba %in% c("Ecological barrier", "Ecological bridge"), "Ecological bridge or barrier", 
+                              if_else(br_ba %in% c("Data barrier", "Data bridge"), "Data bridge or barrier",
+                              if_else(br_ba %in% c("Regulation barrier", "Regulation bridge"), "Regulatory bridge or barrier",
+                              if_else(br_ba %in% c("Social barrier", "Social bridge"), "Social bridge or barrier", NA)))), 
+         code_brba = if_else(br_ba %in% c("Data bridge", "Ecological bridge", "Social bridge", "Regulation bridge"), "bridge", "barrier")) %>%
+  group_by(code_level) %>%
+  distinct()
+
+code_sum_s$code_level <- factor(code_sum_s$code_level, levels = c("Ecological bridge or barrier", "Data bridge or barrier","Regulatory bridge or barrier", "Social bridge or barrier"))
+code_sum_s$code_brba <- factor(code_sum_s$code_brba, levels = c("bridge", "barrier"))
+
+ggplot(code_sum_s, aes(x = code_level, 
+             y = percent,
+             fill = code_brba)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = percent_label),
+            position = position_stack(vjust = 0.65),
+            color = "black", 
+            size = 5) +
+  ylim(-0.7,0.7)+
+  coord_flip() +
+  scale_x_discrete() +
+  scale_fill_manual(values = c("goldenrod", "lightskyblue3"), labels = c("Bridge frequency", "Barrier frequency")) +
+  theme_minimal() +
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x =element_blank(),
+        axis.text.y = element_text(size = 20, color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(-0.17, 0.99),
+        legend.text = element_text(size = 16, color = "black"),
+        strip.text.y.right = element_text(angle = 0, size = 16)) +
+  geom_hline(yintercept = 0.0, linewidth = 1) + 
+  labs(fill = "")+ 
+  guides(fill = guide_legend(nrow = 1))
+
+```
+
+#### Data codes
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 12
+#| fig-height: 10
+#| fig-align: center
+
+# data_freq <- code_freq %>%
+#   filter(code_cat == "Data bridge" | code_cat == "Data barrier")
+# 
+# data_sum <- data_freq %>%
+#   group_by(bridge_barr) %>%
+#   mutate(n_total = sum(total)) %>%
+#   ungroup() %>%
+#   group_by(code_name) %>% 
+#   summarise(value = total/n_total) %>%
+#   mutate(code_cat = ifelse(code_name == "Gaps and inaccuracy" | code_name == "Management scales do not align with system needs" | code_name == "Model abuse" | code_name == "Climate change adding uncertainty to target species habitat use", "Data barrier", "Data bridge")) %>%
+#   mutate(percent_label = scales::percent(value, accuracy = 2))
+#   
+# my_labs <- c("0", "25", "50", "75")
+# data_sum$code_cat <- factor(as.factor(data_sum$code_cat), levels = c("Data bridge", "Data barrier"))
+# 
+# ggplot(data_sum) +
+#   geom_bar(aes(x = value, y = reorder(code_name, value), fill = code_cat), width = 0.6, stat = "identity")+
+#   scale_x_continuous(position = "top", 
+#                      limits = c(0,0.9),
+#                      expand = c(0,0), 
+#                      breaks = c(0, 0.25, 0.5, 0.75),
+#                      labels = my_labs)+
+#   scale_y_discrete(expand = expansion(add = c(0,0))) +
+#   tidyquant::theme_tq() +
+#   theme(
+#     # Set background color to white
+#     panel.background = element_rect(fill = "white"),
+#     # Set the color and the width of the grid lines for the horizontal axis
+#     panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+#     # Remove tick marks by setting their length to 0
+#     axis.ticks.length = unit(0, "mm"),
+#     # Remove the title for both axes
+#     axis.title = element_blank(),
+#     # Only left line of the vertical axis is painted in black
+#     axis.line.y.left = element_line(color = "black"),
+#     # But customize labels for the horizontal axis
+#     axis.text.x = element_text(family = "Econ Sans Cnd", size = 16), 
+#     axis.text.y = element_text(family = "Econ Sans Cnd", size = 16), 
+#     legend.position = "none", 
+#     strip.text = element_text(size = 16)) + 
+#   geom_text(aes(x = value, y = code_name, label = percent_label),
+#     hjust = 0,
+#     nudge_x = -0.0001,
+#     colour = "black",
+#     family = "Econ Sans Cnd",
+#     size = 6)+
+#   labs(subtitle = "Percent from all data bridges or barriers (%)") + 
+#   theme(plot.subtitle = element_text(
+#       family = "Econ Sans Cnd",
+#       size = 20)
+#   ) + 
+#   scale_fill_manual(values = c("goldenrod", "lightskyblue3"))+
+#   facet_wrap(~code_cat, scales = "free", nrow = 2)
+
+```
+
+#### Ecological codes
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 12
+#| fig-height: 10
+#| fig-align: center
+
+# eco_freq <- code_freq %>%
+#   filter(code_cat == "Ecological bridge" | code_cat == "Ecological barrier")
+# 
+# eco_sum <- eco_freq %>%
+#   group_by(bridge_barr) %>%
+#   mutate(n_total = sum(total)) %>%
+#   ungroup() %>%
+#   group_by(code_name) %>% 
+#   summarise(value = total/n_total) %>%
+#   mutate(code_cat = ifelse(code_name == "Need for multispecies management", "Ecological barrier", "Ecological bridge")) %>%
+#   mutate(percent_label = scales::percent(value, accuracy = 2))
+#   
+# eco_sum$code_cat <- factor(as.factor(eco_sum$code_cat), levels = c("Ecological bridge", "Ecological barrier"))
+# my_labs2 <- c("0", "30", "50", "75", "100")
+# 
+# ggplot(eco_sum) +
+#   geom_bar(aes(x = value, y = reorder(code_name, value), fill = code_cat), width = 0.6, stat = "identity")+
+#   scale_x_continuous(position = "top", 
+#                      limits = c(0,1.1),
+#                      expand = c(0,0), 
+#                      breaks = c(0, 0.3, 0.5, 0.75, 1),
+#                      labels = my_labs2)+
+#   scale_y_discrete(expand = expansion(add = c(0,0))) +
+#   tidyquant::theme_tq() +
+#   theme(
+#     # Set background color to white
+#     panel.background = element_rect(fill = "white"),
+#     # Set the color and the width of the grid lines for the horizontal axis
+#     panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+#     # Remove tick marks by setting their length to 0
+#     axis.ticks.length = unit(0, "mm"),
+#     # Remove the title for both axes
+#     axis.title = element_blank(),
+#     # Only left line of the vertical axis is painted in black
+#     axis.line.y.left = element_line(color = "black"),
+#     # But customize labels for the horizontal axis
+#     axis.text.x = element_text(family = "Econ Sans Cnd", size = 16), 
+#     axis.text.y = element_text(family = "Econ Sans Cnd", size = 16), 
+#     legend.position = "none", 
+#     strip.text = element_text(size = 16)) + 
+#   geom_text(aes(x = value, y = code_name, label = percent_label),
+#     hjust = 0,
+#     nudge_x = -0.0001,
+#     colour = "black",
+#     family = "Econ Sans Cnd",
+#     size = 6)+
+#   labs(subtitle = "Percent from all ecological bridges or barriers (%)") + 
+#   theme(plot.subtitle = element_text(
+#       family = "Econ Sans Cnd",
+#       size = 20)
+#   ) + 
+#   scale_fill_manual(values = c("goldenrod", "lightskyblue3"))+
+#   facet_wrap(~code_cat, scales = "free", nrow = 2)
+
+```
+
+#### Social codes
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 12
+#| fig-height: 10
+#| fig-align: center
+
+# soc_freq <- code_freq %>%
+#   filter(code_cat == "Social bridge" | code_cat == "Social barrier")
+# 
+# soc_sum <- soc_freq %>%
+#   group_by(bridge_barr) %>%
+#   mutate(n_total = sum(total)) %>%
+#   ungroup() %>%
+#   group_by(code_name) %>% 
+#   summarise(value = total/n_total) %>%
+#   mutate(code_cat = ifelse(code_name == "Implementation costs" | code_name == "Indirect socioeconomic consequences" | code_name == "Lack of political administration permanence" | code_name == "Poor communication and outreach" | code_name == "Poor program implementation", "Social barrier", "Social bridge")) %>%
+#   mutate(percent_label = scales::percent(value, accuracy = 2))
+#   
+# soc_sum$code_cat <- factor(as.factor(soc_sum$code_cat), levels = c("Social bridge", "Social barrier"))
+# my_labs2 <- c("0", "30")
+# 
+# ggplot(soc_sum) +
+#   geom_bar(aes(x = value, y = reorder(code_name, value), fill = code_cat), width = 0.6, stat = "identity")+
+#   scale_x_continuous(position = "top", 
+#                      limits = c(0,1),
+#                      expand = c(0,0), 
+#                      breaks = c(0,0.25, 0.5, 0.75),
+#                      labels = my_labs)+
+#   scale_y_discrete(expand = expansion(add = c(0,0))) +
+#   tidyquant::theme_tq() +
+#   theme(
+#     # Set background color to white
+#     panel.background = element_rect(fill = "white"),
+#     # Set the color and the width of the grid lines for the horizontal axis
+#     panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+#     # Remove tick marks by setting their length to 0
+#     axis.ticks.length = unit(0, "mm"),
+#     # Remove the title for both axes
+#     axis.title = element_blank(),
+#     # Only left line of the vertical axis is painted in black
+#     axis.line.y.left = element_line(color = "black"),
+#     # But customize labels for the horizontal axis
+#     axis.text.x = element_text(family = "Econ Sans Cnd", size = 16), 
+#     axis.text.y = element_text(family = "Econ Sans Cnd", size = 16), 
+#     legend.position = "none", 
+#     strip.text = element_text(size = 16)) + 
+#   geom_text(aes(x = value, y = code_name, label = percent_label),
+#     hjust = 0,
+#     nudge_x = -0.0001,
+#     colour = "black",
+#     family = "Econ Sans Cnd",
+#     size = 6)+
+#   labs(subtitle = "Percent from all social bridges or barriers (%)") + 
+#   theme(plot.subtitle = element_text(
+#       family = "Econ Sans Cnd",
+#       size = 20)
+#   ) + 
+#   scale_fill_manual(values = c("goldenrod", "lightskyblue3"))+
+#   facet_wrap(~code_cat, scales = "free", nrow = 2)
+
+```
+
+### Regulatory codes
+:::
 
 
 
