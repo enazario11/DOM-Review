@@ -2,16 +2,16 @@
 Bridge,Data bridge,Scale appropriate for system,28
 Bridge,Data bridge,Availability for species,49
 Bridge,Data bridge,Advances in Tech,40
-Bridge,Data bridge,Open-Access Public Data,19
+Bridge,Data bridge,Data transparency,19
 Bridge,Data bridge,Enviro Access,22
 Bridge,Data bridge,Stakeholder/Anthropogenic Data Access,15
 Bridge,Social bridge,Resource Availability (economical),7
-Bridge,Social bridge,Pre-existing regulation & management institutions,41
-Bridge,Social bridge,Adoption Interests & Incentives,45
+Bridge,Social bridge,Pre-existing conditions,41
+Bridge,Social bridge,Adoption incentives,45
 Bridge,Social bridge,DOM implementation feasible (Socio-econ),35
 Bridge,Social bridge,Open Communication or Co-Mngmt in place,67
 Bridge,Species bridge,Climate change,23
-Bridge,Species bridge,Distinct Habitat between target and non-target species,8
+Bridge,Species bridge,Distinct habitat preferences,8
 Bridge,Species bridge,Biotic indicators of target species presence,5
 Bridge,Species bridge,Abiotic indicators of target species presence,31
 Bridge,Species bridge,Migratory and/or dynamic range,31

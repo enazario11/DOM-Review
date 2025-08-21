@@ -33,8 +33,8 @@ library(ggrepel)
 library(forcats)
 
 #lit data
-code_freq <- read.csv(here("data/code_freq.csv"))
-codes_vars <- read.csv(here("data/code_w_vars.csv"))
+code_freq <- read.csv(here("data/code_freq_lit.csv"))
+codes_vars <- read.csv(here("data/code_w_vars_lit.csv"))
 keywords <- read.csv(here("data/keywords.csv"))
 code_rel <- read.csv(here("data/code_rel.csv"))
 
@@ -52,19 +52,16 @@ code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Fine
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Migratory and/or dynamic range", "Highly mobile target species")
 code_freq$code_name[code_freq$code_cat == "Ecological bridge" & code_freq$code_name == "Climate change"] <- "Expected climate change induced range shifts"
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Known Species Nat History", "Life history information available for target species")
-code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Distinct Habitat between target and non-target species", "Distinct habitat preferences among species in system")
 
     #data br
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Advances in Tech", "Access to advanced technology and techniques")
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Scale appropriate for system", "Management scale aligns with system needs")
-code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Open-Access Public Data", "Data transparency and accessibility")
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Availability for species", "Target species data availability")
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Stakeholder/Anthropogenic Data Access", "Resource use data availability")
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Enviro Access", "Abiotic data availability")
 
     #soc br
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Open Communication or Co-Mngmt in place", "Co-management and communication")
-code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Adoption Interests & Incentives", "Adoption incentives for end users")
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Pre-existing regulation & management institutions", "Pre-existing regulation and management institutions")
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "DOM implementation feasible (Socio-econ)", "Feasibility")
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Resource Availability (economical)", "Resource availability")
@@ -576,9 +573,9 @@ colnames(codes_vars2) <- gsub(x = colnames(codes_vars2), pattern = "\\.", replac
 code_freq_new <- codes_vars2 %>%
   mutate(br_pos = as.numeric(if_any(c(33:48, 59:60), ~. == 1)), 
          ba_pos = as.numeric(if_any(49:58, ~. == 1)),
-         br_dat = as.numeric(if_any(c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency and accessibility", "Environmental data availability", "Resource use data availability"), ~. == 1)), 
-         br_eco = as.numeric(if_any(c("Expected climate change induced range shifts", "Distinct habitat preferences among species in system", "Highly mobile target species", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence"), ~. == 1)), 
-         br_soc = as.numeric(if_any(c("Resource availability", "Pre existing regulation and management institutions", "Adoption incentives for end users", "Feasibility", "Co management and communication"), ~. == 1)), 
+         br_dat = as.numeric(if_any(c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency", "Environmental data availability", "Resource use data availability"), ~. == 1)), 
+         br_eco = as.numeric(if_any(c("Expected climate change induced range shifts", "Distinct habitat preferences", "Highly mobile target species", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence"), ~. == 1)), 
+         br_soc = as.numeric(if_any(c("Resource availability", "Pre existing conditions", "Adoption incentives", "Feasibility", "Co management and communication"), ~. == 1)), 
          ba_dat = as.numeric(if_any(c("Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use"), ~. == 1)), 
          ba_eco = as.numeric(if_any(c("Need for multispecies management"), ~. == 1)), 
          ba_soc = as.numeric(if_any(c("Implementation costs", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Poor communication and outreach", "Poor program implementation"), ~. == 1)))
@@ -645,7 +642,7 @@ ggplot(brba_sum, aes(x = code_level,
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 data_freq <- codes_vars2 %>%
-  subset(select = c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency and accessibility", "Environmental data availability", "Resource use data availability", "Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use")) %>%
+  subset(select = c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency", "Environmental data availability", "Resource use data availability", "Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use")) %>%
   gather(category, pres_abs, 1:10) %>%
   mutate(br_ba = ifelse(category == "Gaps and inaccuracy" | category == "Management scales do not align with system needs" | category == "Model abuse" | category == "Climate change adding uncertainty to target species habitat use", "Data barrier", "Data bridge")) %>%
   group_by(category, br_ba)  %>%
@@ -711,7 +708,7 @@ data_bar
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 ecol_freq <- codes_vars2 %>%
-  subset(select = c("Expected climate change induced range shifts", "Distinct habitat preferences among species in system", "Highly mobile target species", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence","Need for multispecies management")) %>%
+  subset(select = c("Expected climate change induced range shifts", "Distinct habitat preferences", "Highly mobile target species", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence","Need for multispecies management")) %>%
   gather(category, pres_abs, 1:8) %>%
   mutate(br_ba = ifelse(category == "Need for multispecies management", "Ecological barrier", "Ecological bridge")) %>%
   group_by(category, br_ba)  %>%
@@ -778,7 +775,7 @@ ecol_bar
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 soc_freq <- codes_vars2 %>%
-  subset(select = c("Resource availability", "Pre existing regulation and management institutions", "Adoption incentives for end users", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Implementation costs", "Poor communication and outreach", "Poor program implementation")) %>%
+  subset(select = c("Resource availability", "Pre existing conditions", "Adoption incentives", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Implementation costs", "Poor communication and outreach", "Poor program implementation")) %>%
   gather(category, pres_abs, 1:9) %>%
   mutate(br_ba = ifelse(category == "Indirect socioeconomic consequences" | category == "Lack of political administration permanence" | category == "Poor communication and outreach" | category == "Poor program implementation" | category == "Implementation costs", "Social barrier", "Social bridge")) %>%
   group_by(category, br_ba)  %>%
@@ -788,7 +785,7 @@ soc_freq <- codes_vars2 %>%
   group_by(category)
 
 soc_freq$category <- replace(soc_freq$category, soc_freq$category == "Co management and communication", "Co-management and communication")
-soc_freq$category <- replace(soc_freq$category, soc_freq$category == "Pre existing regulation and management institutions", "Pre-existing regulation and management institutions")
+soc_freq$category <- replace(soc_freq$category, soc_freq$category == "Pre existing conditions", "Pre-existing conditions")
 soc_freq$br_ba <- factor(as.factor(soc_freq$br_ba), levels = c("Social bridge", "Social barrier"))
 
 
@@ -1150,7 +1147,7 @@ code_rel_melt2 <- code_rel_melt
 code_rel_melt2$brba_code2 <- NA
 
 code_rel_melt2$code2[code_rel_melt2$code2 == "Fine scale management appropriate for target species"] <- "Fine-scale management appropriate for target species"
-code_rel_melt2$code2[code_rel_melt2$code2 == "Pre existing regulation and management institutions"] <- "Pre-existing regulation and management institutions"
+code_rel_melt2$code2[code_rel_melt2$code2 == "Pre existing conditions"] <- "Pre-existing conditions"
 code_rel_melt2$code2[code_rel_melt2$code2 == "Co management and communication"] <- "Co-management and communication"
 
 for(i in 1:nrow(code_rel_melt2)){
@@ -1415,7 +1412,7 @@ code_rel_melt2_s$brba_code2 <- NA
 code_rel_melt2_s$brba_key1 <- NA
 code_rel_melt2_s$brba_key2 <- NA
 
-code_rel_melt2_s$code2[code_rel_melt2_s$code2 == "Pre existing regulation and management institutions"] <- "Pre-existing regulation and management institutions"
+code_rel_melt2_s$code2[code_rel_melt2_s$code2 == "Pre existing conditions"] <- "Pre-existing conditions"
 code_rel_melt2_s$code2[code_rel_melt2_s$code2 == "Co management and communication"] <- "Co-management and communication"
 
 for(i in 1:nrow(code_rel_melt2_s)){
@@ -1656,7 +1653,7 @@ ggplot(brba_sum_s, aes(x = code_level,
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 # data_freq_s <- codes_vars_s2 %>%
-#   subset(select = c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency and accessibility", "Environmental data availability", "Resource use data availability", "Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use")) %>%
+#   subset(select = c("Management scale aligns with system needs", "Target species data availability", "Access to advanced technology and techniques", "Data transparency", "Environmental data availability", "Resource use data availability", "Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use")) %>%
 #   gather(category, pres_abs, 1:10) %>%
 #   mutate(br_ba = ifelse(category == "Gaps and inaccuracy" | category == "Management scales do not align with system needs" | category == "Model abuse" | category == "Climate change adding uncertainty to target species habitat use", "Data barrier", "Data bridge")) %>%
 #   group_by(category, br_ba)  %>%
@@ -1722,7 +1719,7 @@ ggplot(brba_sum_s, aes(x = code_level,
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 # ecol_freq <- codes_vars2 %>%
-#   subset(select = c("Expected climate change induced range shifts", "Distinct habitat preferences among species in system", "Highly mobile target species", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence","Need for multispecies management")) %>%
+#   subset(select = c("Expected climate change induced range shifts", "Distinct habitat preferences", "Highly mobile target species", "Life history information available for target species", "Fine scale management appropriate for target species", "Biotic indicators of target species presence", "Abiotic indicators of target species presence","Need for multispecies management")) %>%
 #   gather(category, pres_abs, 1:8) %>%
 #   mutate(br_ba = ifelse(category == "Need for multispecies management", "Ecological barrier", "Ecological bridge")) %>%
 #   group_by(category, br_ba)  %>%
@@ -1789,7 +1786,7 @@ ggplot(brba_sum_s, aes(x = code_level,
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 # soc_freq <- codes_vars2 %>%
-#   subset(select = c("Resource availability", "Pre existing regulation and management institutions", "Adoption incentives for end users", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Implementation costs", "Poor communication and outreach", "Poor program implementation")) %>%
+#   subset(select = c("Resource availability", "Pre existing conditions", "Adoption incentives", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Implementation costs", "Poor communication and outreach", "Poor program implementation")) %>%
 #   gather(category, pres_abs, 1:9) %>%
 #   mutate(br_ba = ifelse(category == "Indirect socioeconomic consequences" | category == "Lack of political administration permanence" | category == "Poor communication and outreach" | category == "Poor program implementation" | category == "Implementation costs", "Social barrier", "Social bridge")) %>%
 #   group_by(category, br_ba)  %>%
@@ -1799,7 +1796,7 @@ ggplot(brba_sum_s, aes(x = code_level,
 #   group_by(category)
 # 
 # soc_freq$category <- replace(soc_freq$category, soc_freq$category == "Co management and communication", "Co-management and communication")
-# soc_freq$category <- replace(soc_freq$category, soc_freq$category == "Pre existing regulation and management institutions", "Pre-existing regulation and management institutions")
+# soc_freq$category <- replace(soc_freq$category, soc_freq$category == "Pre existing conditions", "Pre-existing conditions")
 # soc_freq$br_ba <- factor(as.factor(soc_freq$br_ba), levels = c("Social bridge", "Social barrier"))
 # 
 # 
@@ -1845,7 +1842,7 @@ ggplot(brba_sum_s, aes(x = code_level,
 
 ```
 
-### Regulatory frequencies
+#### Regulatory frequencies
 
 :::
 
@@ -2110,7 +2107,7 @@ ggplot(code_sum_s, aes(x = code_level,
 
 ```
 
-### Regulatory codes
+#### Regulatory codes
 :::
 
 
