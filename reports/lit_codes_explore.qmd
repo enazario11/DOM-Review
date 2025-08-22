@@ -79,10 +79,8 @@ code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Clim
 
   #soc ba
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Unintended consequences", "Indirect socioeconomic consequences")
-code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Political permanence", "Lack of political administration permanence")
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Communication & Distribution", "Poor communication and outreach")
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Recipient participation", "Poor program implementation")
-code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Cost", "Implementation costs")
 
 ```
 
@@ -201,7 +199,7 @@ ggplot(data = sankey_df,
     size = c(7,7,5,5,5,5,5,5,4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4), 
     nudge_y = c(0,0,0,0,0,0,0,0,0, #poor communication and outreach
                 0.5, #model abuse
-                1, #lack of political permanance
+                1, #Discontinuity
                 1.5, #indirect socioeconomic consequences
                 1.8, #target species is a prey specialist
                 2, #resource availability
@@ -578,7 +576,7 @@ code_freq_new <- codes_vars2 %>%
          br_soc = as.numeric(if_any(c("Resource availability", "Pre existing conditions", "Adoption incentives", "Feasibility", "Co management and communication"), ~. == 1)), 
          ba_dat = as.numeric(if_any(c("Gaps and inaccuracy", "Management scales do not align with system needs", "Model abuse", "Climate change adding uncertainty to target species habitat use"), ~. == 1)), 
          ba_eco = as.numeric(if_any(c("Need for multispecies management"), ~. == 1)), 
-         ba_soc = as.numeric(if_any(c("Implementation costs", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Poor communication and outreach", "Poor program implementation"), ~. == 1)))
+         ba_soc = as.numeric(if_any(c("Cost", "Indirect socioeconomic consequences", "Discontinuity", "Poor communication and outreach", "Poor program implementation"), ~. == 1)))
 
 brba_sum <- code_freq_new %>%
   summarise(n_br = sum(br_pos), freq_br = n_br/118,
@@ -775,9 +773,9 @@ ecol_bar
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 soc_freq <- codes_vars2 %>%
-  subset(select = c("Resource availability", "Pre existing conditions", "Adoption incentives", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Implementation costs", "Poor communication and outreach", "Poor program implementation")) %>%
+  subset(select = c("Resource availability", "Pre existing conditions", "Adoption incentives", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Discontinuity", "Cost", "Poor communication and outreach", "Poor program implementation")) %>%
   gather(category, pres_abs, 1:9) %>%
-  mutate(br_ba = ifelse(category == "Indirect socioeconomic consequences" | category == "Lack of political administration permanence" | category == "Poor communication and outreach" | category == "Poor program implementation" | category == "Implementation costs", "Social barrier", "Social bridge")) %>%
+  mutate(br_ba = ifelse(category == "Indirect socioeconomic consequences" | category == "Discontinuity" | category == "Poor communication and outreach" | category == "Poor program implementation" | category == "Cost", "Social barrier", "Social bridge")) %>%
   group_by(category, br_ba)  %>%
   summarise(n = sum(pres_abs), 
             freq = (n/118)) %>%
@@ -1045,7 +1043,7 @@ soc_sum <- soc_freq %>%
   ungroup() %>%
   group_by(code_name) %>% 
   summarise(value = total/n_total) %>%
-  mutate(code_cat = ifelse(code_name == "Implementation costs" | code_name == "Indirect socioeconomic consequences" | code_name == "Lack of political administration permanence" | code_name == "Poor communication and outreach" | code_name == "Poor program implementation", "Social barrier", "Social bridge")) %>%
+  mutate(code_cat = ifelse(code_name == "Cost" | code_name == "Indirect socioeconomic consequences" | code_name == "Discontinuity" | code_name == "Poor communication and outreach" | code_name == "Poor program implementation", "Social barrier", "Social bridge")) %>%
   mutate(percent_label = scales::percent(value, accuracy = 2))
   
 soc_sum$code_cat <- factor(as.factor(soc_sum$code_cat), levels = c("Social bridge", "Social barrier"))
@@ -1786,9 +1784,9 @@ ggplot(brba_sum_s, aes(x = code_level,
 
   #calculate frequency of bridges vs. barriers being mentioned in articles -- need to add biotic and abiotic indicators cols
 # soc_freq <- codes_vars2 %>%
-#   subset(select = c("Resource availability", "Pre existing conditions", "Adoption incentives", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Lack of political administration permanence", "Implementation costs", "Poor communication and outreach", "Poor program implementation")) %>%
+#   subset(select = c("Resource availability", "Pre existing conditions", "Adoption incentives", "Feasibility", "Co management and communication", "Indirect socioeconomic consequences", "Discontinuity", "Cost", "Poor communication and outreach", "Poor program implementation")) %>%
 #   gather(category, pres_abs, 1:9) %>%
-#   mutate(br_ba = ifelse(category == "Indirect socioeconomic consequences" | category == "Lack of political administration permanence" | category == "Poor communication and outreach" | category == "Poor program implementation" | category == "Implementation costs", "Social barrier", "Social bridge")) %>%
+#   mutate(br_ba = ifelse(category == "Indirect socioeconomic consequences" | category == "Discontinuity" | category == "Poor communication and outreach" | category == "Poor program implementation" | category == "Cost", "Social barrier", "Social bridge")) %>%
 #   group_by(category, br_ba)  %>%
 #   summarise(n = sum(pres_abs), 
 #             freq = (n/118)) %>%
@@ -2060,7 +2058,7 @@ ggplot(code_sum_s, aes(x = code_level,
 #   ungroup() %>%
 #   group_by(code_name) %>% 
 #   summarise(value = total/n_total) %>%
-#   mutate(code_cat = ifelse(code_name == "Implementation costs" | code_name == "Indirect socioeconomic consequences" | code_name == "Lack of political administration permanence" | code_name == "Poor communication and outreach" | code_name == "Poor program implementation", "Social barrier", "Social bridge")) %>%
+#   mutate(code_cat = ifelse(code_name == "Cost" | code_name == "Indirect socioeconomic consequences" | code_name == "Discontinuity" | code_name == "Poor communication and outreach" | code_name == "Poor program implementation", "Social barrier", "Social bridge")) %>%
 #   mutate(percent_label = scales::percent(value, accuracy = 2))
 #   
 # soc_sum$code_cat <- factor(as.factor(soc_sum$code_cat), levels = c("Social bridge", "Social barrier"))

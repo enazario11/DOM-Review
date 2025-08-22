@@ -7,9 +7,8 @@ Bridge,Regulation bridge,Online presence,6
 Bridge,Regulation bridge,Tailored to user group,4
 Bridge,Regulation bridge,Clear objectives,3
 Bridge,Regulation bridge,Communication mechanisms,10
-Bridge,Social bridge,Confidentiality,1
 Bridge,Social bridge,Fleet buy-in,7
-Bridge,Social bridge,Pre-existing conditions,4
+Bridge,Social bridge,External factors increasing participation,4
 Bridge,Social bridge,Communication and transparency,17
 Bridge,Social bridge,Adoption incentives,9
 Bridge,Social bridge,Observable progress,13
@@ -18,20 +17,19 @@ Bridge,Social bridge,Co-management,10
 Bridge,Data bridge,Rapid data delivery,9
 Bridge,Ecological bridge,Distinct habitat preferences,3
 Bridge,Ecological bridge,Predictable spatial use,3
-Barrier,Regulation barrier,Difficult to measure progress,2
-Barrier,Regulation barrier,Hard to implement across diverse stakeholders,1
+Barrier,Regulation barrier,Difficulty assessing impact,2
 Barrier,Regulation barrier,Limited relevance,1
 Barrier,Data barrier,Missing cross-program comparisons,2
-Barrier,Data barrier,Insufficient data,3
-Barrier,Data barrier,Lack of near real-time information,6
-Barrier,Ecological barrier,Bycatch predictability,2
+Barrier,Data barrier,Gaps and inaccuracy,3
+Barrier,Data barrier,Lack of near real-time data,6
+Barrier,Ecological barrier,Unpredictable bycatch patterns,2
 Barrier,Social barrier,Cost,1
-Barrier,Social barrier,Lack of political administration permanence,1
-Barrier,Social barrier,Confidentiality concerns,1
+Barrier,Social barrier,Discontinuity,1
+Barrier,Social barrier,Confidentiality,2
 Barrier,Social barrier,Lack of incentives,4
 Barrier,Social barrier,Volunteer programs reduce participation,3
 Barrier,Social barrier,Regulated programs reduce participation,1
-Barrier,Social barrier,External pressures reducing participation,3
+Barrier,Social barrier,External factors reducing participation,3
 Barrier,Social barrier,Poor communication and outreach,6
-Barrier,Social barrier,Misalignment among stakeholders,8
-Barrier,Social barrier,Negative perception of stakeholder group,2
+Barrier,Social barrier,Interest-holder conflicts,9
+Barrier,Social barrier,Stigmatization,2
