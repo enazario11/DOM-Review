@@ -1,0 +1,419 @@
+---
+title: "DOM bridges and barriers: systematic review and survey"
+author: "Emily Nazario | UC Santa Cruz | enazario'@'ucsc.edu"
+date: "`r Sys.Date()`"
+format:
+ html: 
+  self-contained: true
+editor: visual
+toc: TRUE
+toc-title: "On this page"
+theme: yeti
+fontcolor: "#134f5c"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| include: false
+#| echo: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(tidyquant)
+library(here)
+library(kableExtra)
+library(waffle)
+library(extrafont)
+library(hrbrthemes)
+library(patchwork)
+library(ggalluvial)
+library(ggrepel)
+library(forcats)
+
+#lit data
+code_freq <- read.csv(here("data/code_freq_lit.csv"))
+codes_vars <- read.csv(here("data/code_w_vars_lit.csv"))
+keywords <- read.csv(here("data/keywords.csv"))
+code_rel <- read.csv(here("data/code_rel.csv"))
+
+#survey data
+code_vars_s <- read.csv(here("data/surveys/code_w_vars.csv"))
+code_freq_s <- read.csv(here("data/surveys/code_freq.csv"))
+
+#change codes to new names 
+  #code_freq
+    #sp br  
+code_freq$code_cat <- replace(code_freq$code_cat, code_freq$code_cat == "Species bridge", "Ecological bridge")
+code_freq$code_cat <- replace(code_freq$code_cat, code_freq$code_cat == "Species barrier", "Ecological barrier")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Limited Prey Resources", "Target species is a prey specialist")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Fine Scale management required", "Fine-scale management appropriate for target species")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Migratory and/or dynamic range", "Highly mobile target species")
+code_freq$code_name[code_freq$code_cat == "Ecological bridge" & code_freq$code_name == "Climate change"] <- "Expected climate change induced range shifts"
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Known Species Nat History", "Life history information available for target species")
+
+    #data br
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Advances in Tech", "Access to advanced technology and techniques")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Scale appropriate for system", "Management scale aligns with system needs")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Availability for species", "Target species data availability")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Stakeholder/Anthropogenic Data Access", "Resource use data availability")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Enviro Access", "Abiotic data availability")
+
+    #soc br
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Open Communication or Co-Mngmt in place", "Co-management and communication")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Pre-existing regulation & management institutions", "Pre-existing regulation and management institutions")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "DOM implementation feasible (Socio-econ)", "Feasibility")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Resource Availability (economical)", "Resource availability")
+
+  #sp ba 
+code_freq$code_cat[code_freq$code_name == "Model Abuse"] <- "Data barrier"
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Switch to multi-species mngmnt", "Need for multispecies management")
+
+  #data ba
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Gaps and Accuracy", "Gaps and inaccuracy")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Model Abuse", "Model abuse")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Mismatch in scale", "Management scales do not align with system needs")
+code_freq$code_cat[code_freq$code_name == "Climate change"] <- "Data barrier"
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Climate change", "Climate change adding uncertainty to target species habitat use")
+
+  #soc ba
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Unintended consequences", "Indirect socioeconomic consequences")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Communication & Distribution", "Poor communication and outreach")
+code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Recipient participation", "Poor program implementation")
+
+```
+
+## Questions
+
+**Which themes overlap between the literature and surveys?**
+
+**Which themes only appear in the literature? Which themes are unique to the surveys?**
+
+**How do themes vary between fishing vs. shipping contexts?**
+
+**How do themes vary with positionality of the respondent (surveys only)?**
+
+## Result 1: Bridges and barriers according to review and survey
+
+Here I've presented three options for presenting the themes and sub-themes identified in the review and surveys. I'd love feedback on which option or combination of options best visualize the codes! Depending on your feedback, I'll then spend time cleaning up the best option.
+
+### Option 1 - Sankey diagram
+
+Plot below only presents the review themes and sub-themes. If this is the best way to communicate the codes, I will add a diagram visualizing the survey codes.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 15
+#| fig-height: 15
+
+#calc props for sankey_df csv (fine scale codes are raw totals from code_freq file)
+sum_codes <- sum(code_freq$total) #710 codes
+code_freq %>% 
+  group_by(bridge_barr) %>% 
+  summarise(totals = sum(total))
+
+code_freq %>% 
+  group_by(code_cat) %>% 
+  summarise(totals = sum(total))
+
+
+#load sankey df
+sankey_df <- read.csv(here("data/sankey_freq.csv"))
+
+sankey_df$code_cat <- factor(sankey_df$code_cat, levels = c("Ecological barrier", "Data barrier", "Social barrier", "Data bridge", "Ecological bridge", "Social bridge"))
+
+sankey_df <- sankey_df %>%
+mutate(sum_codes = sum(total), 
+      perc_codes = (total/sum_codes)*100, 
+      round_perc = round(perc_codes, 0))
+
+ggplot(data = sankey_df,
+       aes(axis1 = fct_reorder(bridge_barr, -perc_codes), axis2 = fct_reorder(code_cat, -perc_codes), axis3 = fct_reorder(code_name, -perc_codes), y = perc_codes)) +
+  geom_alluvium(aes(fill = code_cat, color = code_cat), size = 1.5, alpha = 0.8, width = 0.05) +
+  geom_stratum(size = 1.5, color = "grey60", 
+              width = c(1/12,1/12,1/3,1/3,1/3,1/3,1/3,1/3,1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18)) +
+  geom_text(stat = "stratum", 
+    aes(label = after_stat(stratum)),
+    angle = c(90,90,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
+    size = c(7,7,5,5,5,5,5,5,4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4), 
+    nudge_y = c(0,0,0,0,0,0,0,0,0, #poor communication and outreach
+                0.5, #model abuse
+                1, #Discontinuity
+                1.5, #indirect socioeconomic consequences
+                1.8, #target species is a prey specialist
+                2, #resource availability
+                2, #climate change adding uncertainty
+                2, #data transparency
+                2, #need for multi-species management
+                2, #distinct habitat preference
+                2, #fine scale management
+                1.5, #management scale system needs
+                2, #management scale aligns
+                0.8, #feasibility
+                0,0,0,0,0,0,0,0,0,0,0,0,0,0), 
+    nudge_x = c(-0.01,-0.01,0,0,0,0,0,0,0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,   0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05), 
+    hjust = c(0.5, 0.5, 0.5,0.5,0.5,0.5,0.5,0.5,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)) +
+
+  xlim(0.89, 3.6) +
+  ylim(-1, 100)+
+  labs(y = "Proportion of all codes (%)", x = "") +
+  theme_minimal()+
+  theme(axis.text.y = element_text(size = 14), 
+        axis.title.y = element_text(size = 16), 
+        legend.position = "none", 
+        axis.text.x = element_blank(), 
+        panel.grid.major = element_blank())+
+  scale_fill_manual(values = c("#F48136", "#F46036", "#F44336", "#CFE2F3", "#C5E0B4", "#45818E"))+
+  scale_color_manual(values = c("#F48136", "#F46036", "#F44336", "#CFE2F3", "#C5E0B4", "#45818E"))
+```
+
+### Option 2 - Sunburst figure
+
+Plots below are from an old draft of the review themes and sub-themes. If this is the nicest way to plot the codes, I will update the diagram and generate one for the survey themes as well.
+
+![](images/bridges_old.png){fig-align="center" width="70%"}
+
+![](images/barriers_old.png){fig-align="center" width="70%"}
+
+### Option 3 - Table
+
+::: panel-tabset
+
+#### Review: Bridge themes
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+bri_codes <- code_freq %>% 
+  filter(bridge_barr == "Bridge") %>% 
+  subset(select = -c(total, bridge_barr))
+
+colnames(bri_codes) <- c("Code category", "Code label")
+
+bri_codes %>%
+  kbl() %>%
+  kable_styling()
+```
+
+#### Review: Barrier themes
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+bar_codes <- code_freq %>% 
+  filter(bridge_barr == "Barrier") %>% 
+  subset(select = -c(total, bridge_barr))
+
+colnames(bar_codes) <- c("Code category", "Code label")
+
+bar_codes %>%
+  kbl() %>%
+  kable_styling()
+```
+
+#### Survey: Bridge themes
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+bri_codes_s <- code_freq_s %>% 
+  filter(bridge_barr == "Bridge") %>% 
+  subset(select = -c(total, bridge_barr))
+
+colnames(bri_codes_s) <- c("Code category", "Code label")
+
+bri_codes_s %>%
+  kbl() %>%
+  kable_styling()
+
+```
+
+#### Survey: Barrier themes
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+bar_codes_s <- code_freq_s %>% 
+  filter(bridge_barr == "Barrier") %>% 
+  subset(select = -c(total, bridge_barr)) 
+
+colnames(bar_codes_s) <- c("Code category", "Code label")
+
+bar_codes_s %>%
+  kbl() %>%
+  kable_styling()
+
+```
+:::
+
+## Result 2: Frequencies according to review and survey
+
+::: panel-tabset 
+
+### Literature 
+Code appearance frequencies across articles (n = 118). The proportions reported in these figures represent the percent of papers that mentioned a subcode within these broader code categories at least once.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 7
+#| fig-align: center
+#| include: FALSE
+
+code_sum <- code_freq %>%
+  group_by(bridge_barr) %>%
+  mutate(n_total = sum(total)) %>%
+  ungroup() %>%
+  group_by(code_cat) %>% 
+  mutate(n_subtotal = sum(total)) %>%
+  summarise(value = n_subtotal/n_total) %>%
+  rename("br_ba" = code_cat) %>%
+  mutate(percent_label = scales::percent(value, accuracy = 1), 
+         percent = if_else(br_ba == "Data barrier" | br_ba == "Ecological barrier" | br_ba == "Social barrier", value, -value),
+         code_level = if_else(br_ba %in% c("Ecological barrier", "Ecological bridge"), "Ecological bridge or barrier", 
+                              if_else(br_ba %in% c("Data barrier", "Data bridge"), "Data bridge or barrier",
+                              if_else(br_ba %in% c("Social barrier", "Social bridge"), "Social bridge or barrier", NA))), 
+         code_brba = if_else(br_ba %in% c("Data bridge", "Ecological bridge", "Social bridge"), "bridge", "barrier")) %>%
+  group_by(code_level) %>%
+  distinct()
+
+code_sum$code_level <- factor(code_sum$code_level, levels = c("Social bridge or barrier", "Ecological bridge or barrier", "Data bridge or barrier"))
+code_sum$code_brba <- factor(code_sum$code_brba, levels = c("bridge", "barrier"))
+
+ggplot(code_sum, aes(x = code_level, 
+             y = percent,
+             fill = code_brba)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = percent_label),
+            position = position_stack(vjust = 0.65),
+            color = "black", 
+            size = 5) +
+  ylim(-0.4,0.7)+
+  coord_flip() +
+  scale_x_discrete() +
+  scale_fill_manual(values = c("goldenrod", "lightskyblue3"), labels = c("Bridge frequency", "Barrier frequency")) +
+  theme_minimal() +
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x =element_blank(),
+        axis.text.y = element_text(size = 20, color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(-0.17, 0.99),
+        legend.text = element_text(size = 16, color = "black"),
+        strip.text.y.right = element_text(angle = 0, size = 16)) +
+  geom_hline(yintercept = 0.0, linewidth = 1) + 
+  labs(fill = "")+ 
+  guides(fill = guide_legend(nrow = 1))
+
+#ggsave("figures/ms_figs/all_freq/all_freq.png", width = 8, height = 5, units = ("in"))
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 7
+#| fig-align: center
+
+#reformat data
+code_sum_br <- code_freq %>%
+  filter(bridge_barr == "Bridge") %>%
+  mutate(n_total = sum(total)) %>%
+  group_by(code_cat, code_name) %>%
+  summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
+  mutate(percent = scales::percent(value, accuracy = 1), 
+         code_name = factor(code_name)) %>%
+  ungroup() %>%
+  group_by(code_cat) %>%
+  arrange(code_name, desc(percent))
+
+
+#plot
+br_freq <- ggplot(code_sum_br, aes(x = value*100, y = reorder(code_name, value))) + 
+  geom_point(size = 5, color = "goldenrod") + 
+  scale_x_continuous(limits = c(0, 30), 
+                     breaks = seq(0, 30, 5), 
+                     name = "Percent appearance (%)") +
+  theme_minimal() +
+  facet_wrap("code_cat", ncol = 1, scales = "free_y") +
+  theme(strip.placement = "outside",
+        strip.text = element_text(face = "bold", size = 14, hjust = 0), 
+        axis.text = element_text(size = 12, color = "black"), 
+        axis.title = element_text(size = 14, color = "black")) +
+  ylab("")
+
+#ggsave("figures/ms_figs/all_freq/br_freq.png", width = 7, height = 8, units = c("in"))
+
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 7
+#| fig-align: center
+
+#reformat data
+code_sum_ba <- code_freq %>%
+  filter(bridge_barr == "Barrier") %>%
+  mutate(n_total = sum(total)) %>%
+  group_by(code_cat, code_name) %>%
+  summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
+  mutate(percent = scales::percent(value, accuracy = 1), 
+         code_name = factor(code_name)) %>%
+  ungroup() %>%
+  group_by(code_cat) %>%
+  arrange(code_name, desc(percent))
+
+
+#plot
+ba_freq <- ggplot(code_sum_ba, aes(x = value*100, y = reorder(code_name, value))) + 
+  geom_point(size = 5, color = "lightskyblue3") + 
+  scale_x_continuous(limits = c(0, 30), 
+                     breaks = seq(0, 30, 5), 
+                     name = "Percent appearance (%)") +
+  theme_minimal() +
+  facet_wrap("code_cat", ncol = 1, scales = "free_y") +
+  theme(strip.placement = "outside",
+        strip.text = element_text(face = "bold", size = 14, hjust = 0), 
+        axis.text = element_text(size = 12, color = "black"), 
+        axis.title = element_text(size = 14, color = "black")) +
+  ylab("")
+
+#ggsave("figures/ms_figs/all_freq/ba_freq.png", width = 8, height = 8, units = c("in"))
+
+```
+
+![](images/br_ba_freq.png){fig-align="center" width="8in", height = "10in"}
+
+### Surveys
+
+:::
+
+## Result 3: Variations by industry (fishing vs. shipping)
+
+
+
+
+## Result 4: Variations by position (survey only)
+
+
+
+
+
+

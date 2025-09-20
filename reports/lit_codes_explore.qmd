@@ -1555,7 +1555,7 @@ ggplot(code_vars_s, aes(x = "", pos_num))+
 ```
 
 
-## Code appearance frequencies across surveys (n = 21)
+## Code appearance frequencies across surveys (n = 2, not including EcoCast)
 
 The proportions reported in these figures represent the percent of surveys that mentioned a subcode within these broader code categories at least once.
 
@@ -1575,19 +1575,19 @@ colnames(codes_vars_s2) <- gsub(x = colnames(codes_vars_s2), pattern = "\\.", re
 
   #calculate frequency of bridges vs. barriers being mentioned in surveys
 code_freq_new_s <- codes_vars_s2 %>%
-  mutate(br_pos = as.numeric(if_any(38:61, ~. == 1)), 
-         ba_pos = as.numeric(if_any(21:37, ~. == 1)),
-         br_reg = as.numeric(if_any(c(38:45), ~. ==1)),
-         br_soc = as.numeric(if_any(c(46:55), ~. == 1)), 
-         br_dat = as.numeric(if_any(c(56:57), ~. == 1)), 
-         br_eco = as.numeric(if_any(c(58:61), ~. == 1)), 
-         ba_reg = as.numeric(if_any(c(21:23), ~. == 1)),
-         ba_dat = as.numeric(if_any(c(24:26), ~. == 1)), 
-         ba_eco = as.numeric(if_any(c(27), ~. == 1)), 
-         ba_soc = as.numeric(if_any(c(28:37), ~. == 1)))
+  mutate(br_pos = as.numeric(if_any(37:54, ~. == 1)), 
+         ba_pos = as.numeric(if_any(21:36, ~. == 1)),
+         br_reg = as.numeric(if_any(c(37:44, 50), ~. ==1)),
+         br_soc = as.numeric(if_any(c(45:49, 51), ~. == 1)), 
+         br_dat = as.numeric(if_any(c(52), ~. == 1)), 
+         br_eco = as.numeric(if_any(c(53, 54), ~. == 1)), 
+         ba_reg = as.numeric(if_any(c(21, 22), ~. == 1)),
+         ba_dat = as.numeric(if_any(c(23:25), ~. == 1)), 
+         ba_eco = as.numeric(if_any(c(26), ~. == 1)), 
+         ba_soc = as.numeric(if_any(c(27:36), ~. == 1)))
 
 brba_sum_s <- code_freq_new_s %>%
-  summarise(n_br = sum(br_pos), freq_br = n_br/21,
+  summarise(n_br = sum(br_pos), freq_br = n_br/21, #total number of surveys not including EcoCast
             n_ba = sum(ba_pos), freq_ba = n_ba/21,
             n_br_e = sum(br_eco), freq_br_e = n_br_e/21,
             n_br_d = sum(br_dat), freq_br_d = n_br_d/21,
@@ -1604,13 +1604,13 @@ brba_sum_s <- code_freq_new_s %>%
          code_level = if_else(br_ba %in% c("freq_ba", "freq_br"), "Overall bridge or barrier", 
                               if_else(br_ba %in% c("freq_ba_e", "freq_br_e"), "Ecological bridge or barrier", 
                               if_else(br_ba %in% c("freq_ba_d", "freq_br_d"), "Data bridge or barrier",
-                              if_else(br_ba %in% c("freq_ba_r", "freq_br_r"), "Regulatory bridge or barrier",
+                              if_else(br_ba %in% c("freq_ba_r", "freq_br_r"), "Implementation bridge or barrier",
                               if_else(br_ba %in% c("freq_ba_s", "freq_br_s"), "Social bridge or barrier", NA))))),
          code_brba = if_else(br_ba %in% c("freq_br", "freq_br_e", "freq_br_s", "freq_br_d", "freq_br_r"), "bridge", "barrier"),
          alpha_brba = if_else(br_ba %in% c("freq_br_e", "freq_br_s", "freq_br_d", "freq_br_r", "freq_ba_e", "freq_ba_s", "freq_ba_d", "freq_ba_r"), "alpha", "no_alpha")) %>%
   group_by(code_level)
 
-brba_sum_s$code_level <- factor(brba_sum_s$code_level, levels = c("Ecological bridge or barrier", "Data bridge or barrier", "Regulatory bridge or barrier","Social bridge or barrier", "Overall bridge or barrier"))
+brba_sum_s$code_level <- factor(brba_sum_s$code_level, levels = c("Ecological bridge or barrier", "Data bridge or barrier", "Implementation bridge or barrier","Social bridge or barrier", "Overall bridge or barrier"))
 brba_sum_s$code_brba <- factor(brba_sum_s$code_brba, levels = c("bridge", "barrier"))
 
 ggplot(brba_sum_s, aes(x = code_level, 
@@ -1840,7 +1840,7 @@ ggplot(brba_sum_s, aes(x = code_level,
 
 ```
 
-#### Regulatory frequencies
+#### Implementation frequencies
 
 :::
 
@@ -1871,13 +1871,13 @@ code_sum_s <- code_freq_s %>%
          percent = if_else(br_ba == "Data barrier" | br_ba == "Ecological barrier" | br_ba == "Social barrier" | br_ba == "Regulation barrier", value, -value),
          code_level = if_else(br_ba %in% c("Ecological barrier", "Ecological bridge"), "Ecological bridge or barrier", 
                               if_else(br_ba %in% c("Data barrier", "Data bridge"), "Data bridge or barrier",
-                              if_else(br_ba %in% c("Regulation barrier", "Regulation bridge"), "Regulatory bridge or barrier",
+                              if_else(br_ba %in% c("Regulation barrier", "Regulation bridge"), "Implementation bridge or barrier",
                               if_else(br_ba %in% c("Social barrier", "Social bridge"), "Social bridge or barrier", NA)))), 
          code_brba = if_else(br_ba %in% c("Data bridge", "Ecological bridge", "Social bridge", "Regulation bridge"), "bridge", "barrier")) %>%
   group_by(code_level) %>%
   distinct()
 
-code_sum_s$code_level <- factor(code_sum_s$code_level, levels = c("Ecological bridge or barrier", "Data bridge or barrier","Regulatory bridge or barrier", "Social bridge or barrier"))
+code_sum_s$code_level <- factor(code_sum_s$code_level, levels = c("Ecological bridge or barrier", "Data bridge or barrier","Implementation bridge or barrier", "Social bridge or barrier"))
 code_sum_s$code_brba <- factor(code_sum_s$code_brba, levels = c("bridge", "barrier"))
 
 ggplot(code_sum_s, aes(x = code_level, 
@@ -2105,7 +2105,7 @@ ggplot(code_sum_s, aes(x = code_level,
 
 ```
 
-#### Regulatory codes
+#### Implementation codes
 :::
 
 
