@@ -86,9 +86,9 @@ code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Reci
 
 ## Questions
 
-**Which themes overlap between the literature and surveys?**
+**Which themes appear in both sources?**
 
-**Which themes only appear in the literature? Which themes are unique to the surveys?**
+**What new information have surveys added beyond what was already written in the literature?**
 
 **How do themes vary between fishing vs. shipping contexts?**
 
@@ -181,7 +181,6 @@ Plots below are from an old draft of the review themes and sub-themes. If this i
 ### Option 3 - Table
 
 ::: panel-tabset
-
 #### Review: Bridge themes
 
 ```{r}
@@ -259,10 +258,10 @@ bar_codes_s %>%
 
 ## Result 2: Frequencies according to review and survey
 
-::: panel-tabset 
+Code appearance frequencies across all bridge **OR** barrier codes. The proportions reported in these figures represent the percent of codes that theme or sub-theme comprises.
 
-### Literature 
-Code appearance frequencies across articles (n = 118). The proportions reported in these figures represent the percent of papers that mentioned a subcode within these broader code categories at least once.
+::: panel-tabset
+### Literature
 
 ```{r}
 #| echo: false
@@ -345,11 +344,14 @@ code_sum_br <- code_freq %>%
 #plot
 br_freq <- ggplot(code_sum_br, aes(x = value*100, y = reorder(code_name, value))) + 
   geom_point(size = 5, color = "goldenrod") + 
-  scale_x_continuous(limits = c(0, 30), 
-                     breaks = seq(0, 30, 5), 
-                     name = "Percent appearance (%)") +
+  # scale_x_continuous(limits = c(0, 30), 
+  #                    breaks = seq(0, 30, 5), 
+  #                    name = "Percent appearance (%)") +
   theme_minimal() +
   facet_wrap("code_cat", ncol = 1, scales = "free_y") +
+  scale_x_reverse(limits = c(30, 0), 
+                  #breaks = seq(0, 30, 5), 
+                  name = "Percent appearance (%)")+
   theme(strip.placement = "outside",
         strip.text = element_text(face = "bold", size = 14, hjust = 0), 
         axis.text = element_text(size = 12, color = "black"), 
@@ -385,12 +387,13 @@ code_sum_ba <- code_freq %>%
 ba_freq <- ggplot(code_sum_ba, aes(x = value*100, y = reorder(code_name, value))) + 
   geom_point(size = 5, color = "lightskyblue3") + 
   scale_x_continuous(limits = c(0, 30), 
-                     breaks = seq(0, 30, 5), 
+                     breaks = seq(0, 30, 10), 
                      name = "Percent appearance (%)") +
+  scale_y_discrete(position = "right") +
   theme_minimal() +
   facet_wrap("code_cat", ncol = 1, scales = "free_y") +
   theme(strip.placement = "outside",
-        strip.text = element_text(face = "bold", size = 14, hjust = 0), 
+        strip.text = element_text(face = "bold", size = 14, hjust = 1), 
         axis.text = element_text(size = 12, color = "black"), 
         axis.title = element_text(size = 14, color = "black")) +
   ylab("")
@@ -399,21 +402,199 @@ ba_freq <- ggplot(code_sum_ba, aes(x = value*100, y = reorder(code_name, value))
 
 ```
 
-![](images/br_ba_freq.png){fig-align="center" width="8in", height = "10in"}
+![](images/br_ba_freq.png){fig-align="center" width="10in", height = "12in"}
 
 ### Surveys
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 7
+#| fig-align: center
+
+#theme bridge/barrier
+code_sum_s <- code_freq_s %>%
+  group_by(bridge_barr) %>%
+  mutate(n_total = sum(total)) %>%
+  ungroup() %>%
+  group_by(code_cat) %>% 
+  mutate(n_subtotal = sum(total)) %>%
+  summarise(value = n_subtotal/n_total) %>%
+  rename("br_ba" = code_cat) %>%
+  mutate(percent_label = scales::percent(value, accuracy = 1), 
+         percent = if_else(br_ba == "Data barrier" | br_ba == "Ecological barrier" | br_ba == "Social barrier" | br_ba == "Implementation barrier", value, -value),
+         code_level = if_else(br_ba %in% c("Ecological barrier", "Ecological bridge"), "Ecological bridge or barrier", 
+                              if_else(br_ba %in% c("Data barrier", "Data bridge"), "Data bridge or barrier",
+                              if_else(br_ba %in% c("Social barrier", "Social bridge"), "Social bridge or barrier", 
+                              if_else(br_ba %in% c("Implementation bridge", "Implementation barrier"), "Implementation bridge or barrier", NA)))), 
+         code_brba = if_else(br_ba %in% c("Data bridge", "Ecological bridge", "Social bridge", "Implementation bridge"), "bridge", "barrier")) %>%
+  group_by(code_level) %>%
+  distinct()
+
+code_sum_s$code_level <- factor(code_sum_s$code_level, levels = c("Implementation bridge or barrier", "Social bridge or barrier", "Ecological bridge or barrier", "Data bridge or barrier"))
+code_sum_s$code_brba <- factor(code_sum_s$code_brba, levels = c("bridge", "barrier"))
+
+all_freq_survey <- ggplot(code_sum_s, aes(x = code_level, 
+             y = percent,
+             fill = code_brba)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = percent_label),
+            position = position_stack(vjust = 0.65),
+            color = "black", 
+            size = 5) +
+  ylim(-0.55,0.7)+
+  coord_flip() +
+  scale_x_discrete() +
+  scale_fill_manual(values = c("goldenrod", "lightskyblue3"), labels = c("Bridge frequency", "Barrier frequency")) +
+  theme_minimal() +
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x =element_blank(),
+        axis.text.y = element_text(size = 26, color = "black"),
+        panel.grid = element_blank(),
+        legend.position = c(-0.17, 0.99),
+        legend.text = element_text(size = 20, color = "black"),
+        strip.text.y.right = element_text(angle = 0, size = 18)) +
+  geom_hline(yintercept = 0.0, linewidth = 1) + 
+  labs(fill = "")+ 
+  guides(fill = guide_legend(nrow = 1))
+
+#ggsave("figures/ms_figs/all_freq/all_freq_survey.png", width = 13, height = 8, units = ("in"))
+
+#bridge freq
+#reformat data
+code_freq_s$code_cat <- factor(code_freq_s$code_cat, levels = c("Data bridge", "Data barrier", "Ecological bridge", "Ecological barrier", "Social bridge", "Social barrier", "Implementation bridge","Implementation barrier"))
+
+code_sum_br_s <- code_freq_s %>%
+  filter(bridge_barr == "Bridge") %>%
+  mutate(n_total = sum(total)) %>%
+  group_by(code_cat, code_name) %>%
+  summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
+  mutate(percent = scales::percent(value, accuracy = 1), 
+         code_name = factor(code_name)) %>%
+  ungroup() %>%
+  group_by(code_cat) %>%
+  arrange(code_name, desc(percent))
+
+#plot
+br_freq_s <- ggplot(code_sum_br_s, aes(x = value*100, y = reorder(code_name, value))) + 
+  geom_point(size = 5, color = "goldenrod") + 
+  # scale_x_continuous(limits = c(0, 30), 
+  #                    breaks = seq(0, 30, 5), 
+  #                    name = "Percent appearance (%)") +
+  theme_minimal() +
+  facet_wrap("code_cat", ncol = 1, scales = "free_y") +
+  scale_x_reverse(limits = c(20, 0), 
+                  #breaks = seq(0, 30, 5), 
+                  name = "Percent appearance (%)")+
+  theme(strip.placement = "outside",
+        strip.text = element_text(face = "bold", size = 14, hjust = 0), 
+        axis.text = element_text(size = 12, color = "black"), 
+        axis.title = element_text(size = 14, color = "black")) +
+  ylab("")
+
+#ggsave("figures/ms_figs/all_freq/br_freq_survey.png", width = 6, height = 8, units = c("in"))
+
+#barrier freq
+#reformat data
+code_sum_ba_s <- code_freq_s %>%
+  filter(bridge_barr == "Barrier") %>%
+  mutate(n_total = sum(total)) %>%
+  group_by(code_cat, code_name) %>%
+  summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
+  mutate(percent = scales::percent(value, accuracy = 1), 
+         code_name = factor(code_name)) %>%
+  ungroup() %>%
+  group_by(code_cat) %>%
+  arrange(code_name, desc(percent))
+
+
+#plot
+ba_freq_s <- ggplot(code_sum_ba_s, aes(x = value*100, y = reorder(code_name, value))) + 
+  geom_point(size = 5, color = "lightskyblue3") + 
+  scale_x_continuous(limits = c(0, 20), 
+                     breaks = seq(0, 20, 10), 
+                     name = "Percent appearance (%)") +
+  scale_y_discrete(position = "right") +
+  theme_minimal() +
+  facet_wrap("code_cat", ncol = 1, scales = "free_y") +
+  theme(strip.placement = "outside",
+        strip.text = element_text(face = "bold", size = 16, hjust = 1), 
+        axis.text = element_text(size = 12, color = "black"), 
+        axis.title = element_text(size = 14, color = "black")) +
+  ylab("")
+
+#ggsave("figures/ms_figs/all_freq/ba_freq_survey.png", width = 6, height = 9, units = c("in"))
+
+```
+
+![](images/br_ba_freq_survey.png){fig-align="center" width="10in", height = "12in"}
 :::
 
-## Result 3: Variations by industry (fishing vs. shipping)
+## Result 3: Variations by industry
 
+### 3.1: Conservation problems DOM has been used to address
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5.5
+#| fig-align: center
 
+codes_vars$broad_location <- as.factor(codes_vars$broad_location)
+codes_LU <- codes_vars[!duplicated(codes_vars$Lit_unit), ]
+
+consv <- codes_LU %>%
+  gather(col, consv_topic, reason1:reason3) %>%
+  subset(select = consv_topic)
+
+consv_s <- consv %>%
+  group_by(consv_topic) %>%
+  filter(consv_topic != "NA") %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  mutate(perc = count/sum(count)*100) 
+
+consv_bar <- ggplot(consv_s) +
+  geom_bar(aes(x = perc, y = reorder(consv_topic, perc)), fill = "dodgerblue4", width = 0.6, stat = "identity")+
+  scale_x_continuous(position = "top", 
+                     expand = c(0,0), 
+                     limits = c(0, 45))+
+  scale_y_discrete(expand = expansion(add = c(0,0))) + 
+  theme(
+    # Set background color to white
+    panel.background = element_rect(fill = "white"),
+    # Set the color and the width of the grid lines for the horizontal axis
+    panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+    # Remove tick marks by setting their length to 0
+    axis.ticks.length = unit(0, "mm"),
+    # Remove the title for both axes
+    axis.title = element_blank(),
+    # Only left line of the vertical axis is painted in black
+    axis.line.y.left = element_line(color = "black"),
+    # Remove labels from the vertical axis
+    axis.text.y = element_blank(),
+    # But customize labels for the horizontal axis
+    axis.text.x = element_text(family = "Arial", size = 12)) + 
+  geom_text(aes(x = perc, y = consv_topic, label = consv_topic),
+    hjust = 0,
+    nudge_x = 0.3,
+    colour = "dodgerblue4",
+    family = "Arial",
+    size = 3.5)+
+  labs(subtitle = "Percent of sum from all articles (%)") + 
+  theme(plot.subtitle = element_text(
+      family = "Arial",
+      size = 13)
+  )
+
+consv_bar
+```
+
+### 3.2: Fishing vs. shipping
 
 ## Result 4: Variations by position (survey only)
-
-
-
-
-
-
