@@ -256,7 +256,9 @@ bar_codes_s %>%
 ```
 :::
 
-## Result 2: Frequencies according to review and survey
+## Result 2: Codes by review and survey
+
+### Result 2.1: Frequencies according to review and survey
 
 Code appearance frequencies across all bridge **OR** barrier codes. The proportions reported in these figures represent the percent of codes that theme or sub-theme comprises.
 
@@ -533,9 +535,131 @@ ba_freq_s <- ggplot(code_sum_ba_s, aes(x = value*100, y = reorder(code_name, val
 ![](images/br_ba_freq_survey.png){fig-align="center" width="10in", height = "12in"}
 :::
 
+### Result 2.2: Time series of top theme from literature, co-management
+
+Grey is the number of DOM publications per year, while blue is the number of times co-management and communication was referenced. Whanted to see if this code was referenced more over time, but seems that it just tracks the number of DOM publications. Likely won't include.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 7
+#| fig-height: 5
+#| fig-align: center
+
+code_ts <- codes_vars %>% 
+  mutate(year = str_extract_all(Doc, "\\d+\\.?\\d*"), 
+         year = as.Date(as.character(year), format = "%Y"), 
+         year = year(year)) %>%
+  select(c(Doc, year, Co.management.and.communication)) %>%
+  group_by(year) %>%
+  summarise(n_appear = sum(Co.management.and.communication), 
+            n_year = n()) 
+
+colnames(code_ts) <- c("Year", "com", "pubs")
+
+ggplot(code_ts, aes(as.numeric(Year))) + 
+  geom_path(aes(y = com), linewidth = 1.5, color = "dodgerblue4") + 
+  geom_point(aes(y= com), size = 5, fill = "dodgerblue4", color = "black", shape = 21) + 
+  geom_path(aes(y = pubs), linewidth = 1.5, color = "grey60") + 
+  geom_point(aes(y = pubs), size = 5, fill = "grey60", color = "black", shape = 21) +
+  xlab("") +
+  ylab("Count (#)") +
+  theme_minimal() + 
+  theme(axis.text = element_text(size = 14, color = "black"), 
+        axis.title = element_text(size = 16, color = "black")) 
+```
+
+### Result 2.3: Heat maps of theme co-occurence
+
+This heatmap represents number of times two codes co-occurered together in the same article, or "theme co-occurence". I have filtered totals greater than or equal to 11, which was the 90% quantile of the co-occurrence total data set. Blue text represents data bridges and barriers, grey text represents ecological bridges and barriers, and orange text represents social bridges and barriers.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: center
+#| include: FALSE
+
+code_rel_melt <- reshape::melt(code_rel)
+code_rel_melt$variable <- gsub(".", " ", code_rel_melt$variable, fixed = TRUE)
+
+code_rel_melt <- code_rel_melt %>%
+  separate(Code.System, c("key", "code1"), "> ", convert = TRUE) 
+
+code_rel_melt$key <- str_trim(code_rel_melt$key)
+
+colnames(code_rel_melt) <- c("brba_code1", "code1", "code2", "total")
+
+#add brba column to second code col
+code_rel_melt2 <- code_rel_melt
+code_rel_melt2$brba_code2 <- NA
+
+code_rel_melt2$code2[code_rel_melt2$code2 == "Fine scale management appropriate for target species"] <- "Fine-scale management appropriate for target species"
+code_rel_melt2$code2[code_rel_melt2$code2 == "Pre existing regulation and management institutions"] <- "Pre-existing regulation and management institutions"
+code_rel_melt2$code2[code_rel_melt2$code2 == "Co management and communication"] <- "Co-management and communication"
+
+for(i in 1:nrow(code_rel_melt2)){
+  code_temp = code_rel_melt2$code2[i]
+
+  brba_temp = code_rel_melt2 %>% filter(code1 == code_temp & code2 == code_temp)
+  brba_code_temp = brba_temp$brba_code1[1]
+
+  code_rel_melt2$brba_code2[i] <- brba_code_temp
+}
+
+code_rel_melt2$brba_code2[code_rel_melt2$code2 == "Target species is a prey specialist"] <- "Ecological bridge"
+
+group_colors = c("Data Bridge" = "dodgerblue4", "Data Barrier" = "dodgerblue4", "Ecological Bridge" = "honeydew4", "Ecological Barrier" = "honeydew4", "Social Bridge" = "darkorange4", "Social Barrier" = "darkorange4")
+
+code_rel_melt_h <- code_rel_melt2 %>%
+  filter(total >= 11) %>%
+  mutate(bor_box = ifelse(total >= 11, "TRUE", "FALSE"), 
+        bor_box = as.factor(bor_box), 
+        code1 = as.factor(code1), 
+        code2 = as.factor(code2))
+
+code_rel_melt_h$bor_box <- factor(code_rel_melt_h$bor_box, levels = c("TRUE", "FALSE"))
+
+code_rel_melt_h <- code_rel_melt_h %>%
+  mutate(code1 = reorder(code1, -total, FUN = mean),
+         code2 = reorder(code2, total, FUN = mean))
+
+unique_x_groups <- code_rel_melt_h %>%
+distinct(code1, brba_code1) %>%
+arrange(code1)
+
+unique_y_groups <- code_rel_melt_h %>%
+distinct(code2, brba_code2) %>%
+arrange(code2)
+
+x_colors <- setNames(group_colors[unique_x_groups$brba_code1], unique_x_groups$code1)
+y_colors <- setNames(group_colors[unique_y_groups$brba_code2], unique_y_groups$code2)
+
+ggplot(code_rel_melt_h, aes(x = code1, y = reorder(code2, total))) +
+geom_tile(aes(fill = total, colour = bor_box)) + 
+scale_fill_gradient2(high = "red")+
+ylab("")+
+xlab("")+
+labs(fill = "Number of co-occurences")+
+theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.3, size = 14, face = "bold", color = x_colors[levels(code_rel_melt_h$code1)]), 
+      axis.text.y = element_text(size = 14, face = "bold", color = y_colors[levels(code_rel_melt_h$code2)]), 
+      panel.background = element_blank())+
+geom_text(aes(label = total))+
+scale_color_manual(values = c("black", "#00000000"))+
+guides(color = "none")
+
+#ggsave("figures/ms_figs/heat_tile.png", width = 10, height = 8, units = c("in"))
+
+```
+
+![](images/heat_tile_ai.png){fig-align="center" width="10in", height = "8in"}
+
 ## Result 3: Variations by industry
 
-### 3.1: Conservation problems DOM has been used to address
+### 3.1: Management and conservation problems DOM has been used to address
 
 ```{r}
 #| echo: false
