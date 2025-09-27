@@ -82,6 +82,13 @@ code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Unin
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Communication & Distribution", "Poor communication and outreach")
 code_freq$code_name <- replace(code_freq$code_name, code_freq$code_name == "Recipient participation", "Poor program implementation")
 
+theme_ms <- function(){
+  theme_minimal() %+replace%    
+    theme(axis.text = element_text(size = 14, color = "black"), 
+          axis.title = element_text(size = 16, color = "black"), 
+          strip.text = element_text(size = 13, color = "black"))
+}
+
 ```
 
 ## Questions
@@ -720,5 +727,129 @@ consv_bar
 ```
 
 ### 3.2: Fishing vs. shipping
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 7
+#| fig-align: center
+
+
+#format data
+freq_job_survey <- code_vars_s %>% 
+  select(c(1, 21:54)) %>% 
+  janitor::clean_names() %>%
+  pivot_longer(2:35, names_to = "sub_theme", values_to = "total") %>%
+  group_by(survey, sub_theme) %>%
+  summarise(total = sum(total), 
+            .groups = "drop") %>%
+  mutate(fish_ship = ifelse(str_detect(survey, "WhaleWatch"), "Shipping", "Fishing")) 
+
+lib_job_survey <- code_freq_s %>%
+  mutate(id = paste(bridge_barr, code_cat, code_name, sep = "_")) %>% 
+  select(id)
+
+freq_job_survey$id <- NA
+for(i in 1:nrow(freq_job_survey)){
+  curr_code = freq_job_survey$sub_theme[i]
+  curr_id = lib_job_survey$id[agrepl(curr_code, lib_job_survey$id, 6)]
+  
+  freq_job_survey$id[i] <- curr_id
+  
+}
+
+freq_job_survey$id[freq_job_survey$sub_theme == "stigmatization"] <- "Barrier_Social barrier_Stigmatization"
+freq_job_survey$id[freq_job_survey$sub_theme == "cost"] <- "Barrier_Social barrier_Cost"
+
+freq_job_survey <- freq_job_survey %>%
+  separate_wider_delim(id, delim = "_", names = c("bridge_barr", "code_cat", "code_name"))
+
+freq_job_survey$bridge_barr <- factor(freq_job_survey$bridge_barr, levels = c("Bridge", "Barrier"))
+
+#calculate proportions
+freq_job_survey2 <- freq_job_survey %>%
+  group_by(fish_ship, bridge_barr) %>%
+  mutate(n_total = sum(total)) %>%
+  ungroup() %>%
+  group_by(fish_ship, bridge_barr, code_cat) %>% 
+  mutate(n_subtotal = sum(total)) %>%
+  reframe(value = (n_subtotal/n_total)*100) %>%
+  ungroup() %>%
+  mutate(code_level = if_else(code_cat %in% c("Ecological barrier", "Ecological bridge"), "Ecological bridge or barrier", 
+                              if_else(code_cat %in% c("Data barrier", "Data bridge"), "Data bridge or barrier",
+                              if_else(code_cat %in% c("Social barrier", "Social bridge"), "Social bridge or barrier", 
+                              if_else(code_cat %in% c("Implementation bridge", "Implementation barrier"), "Implementation bridge or barrier", NA)))), 
+          id = paste(fish_ship, bridge_barr, code_cat)) %>%
+  distinct(id, .keep_all = TRUE)
+
+
+#stacked bar plots
+stack_survey <- ggplot(freq_job_survey2, aes(fill=code_level, y=value, x=fish_ship)) + 
+    geom_bar(position="stack", stat="identity") +
+    scale_fill_manual(values = c("#CFE2F3", "#C5E0B4","royalblue4","#45818E")) +
+    facet_wrap(~bridge_barr) +
+    labs(fill = "Sub-theme") +
+    theme_ms() +
+    xlab("") + 
+    ylab("Proportion of theme (%)")
+
+#radar plots
+freq_job_survey3 <- freq_job_survey %>%
+  group_by(fish_ship, bridge_barr) %>%
+  mutate(n_total = sum(total)) %>%
+  ungroup() %>%
+  group_by(fish_ship, bridge_barr, code_name) %>% 
+  mutate(n_subtotal = sum(total)) %>%
+  reframe(value = (n_subtotal/n_total)*100) %>%
+  ungroup() %>%
+  mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
+  distinct(id, .keep_all = TRUE) %>%
+  select(-c(id))
+
+top_survey <- freq_job_survey3 %>% group_by(fish_ship, bridge_barr) %>% arrange(desc(value)) %>% top_n(3) %>% ungroup()
+
+top_bridge <- top_survey %>% 
+  filter(bridge_barr == "Bridge") %>% 
+  pivot_wider(names_from = code_name, values_from = value) %>% 
+  select(-bridge_barr) %>%
+  mutate_all(~replace_na(., 0))
+
+
+top_barrier <- top_survey %>% 
+  filter(bridge_barr == "Barrier") %>% 
+  pivot_wider(names_from = code_name, values_from = value) %>% 
+  select(-bridge_barr) %>%
+  mutate_all(~replace_na(., 0))
+
+radar_br_survey <- ggradar::ggradar(top_bridge,
+        values.radar = c(0, 14, 22), 
+        background.circle.colour = "white",
+        axis.line.colour = "gray60",
+        gridline.min.colour = "gray60",
+        gridline.mid.colour = "gray60",
+        gridline.max.colour = "gray60",
+        group.colours = c("#F29325", "#007172"),
+        legend.position = "bottom", 
+        fill = TRUE, 
+        axis.label.size = 3.5)
+
+radar_ba_survey <- ggradar::ggradar(top_barrier,
+        values.radar = c(0, 17, 28), 
+        background.circle.colour = "white",
+        axis.line.colour = "gray60",
+        gridline.min.colour = "gray60",
+        gridline.mid.colour = "gray60",
+        gridline.max.colour = "gray60",
+        group.colours = c("#F29325", "#007172"),
+        legend.position = "none", 
+        fill = TRUE, 
+        axis.label.size = 3.5)
+
+stack_survey | radar_br_survey | radar_ba_survey
+```
+
+
 
 ## Result 4: Variations by position (survey only)
