@@ -735,6 +735,7 @@ consv_bar
 #| fig-width: 10
 #| fig-height: 7
 #| fig-align: center
+#| include: false
 
 
 #format data
@@ -786,14 +787,17 @@ freq_job_survey2 <- freq_job_survey %>%
 
 
 #stacked bar plots
-stack_survey <- ggplot(freq_job_survey2, aes(fill=code_level, y=value, x=fish_ship)) + 
+ggplot(freq_job_survey2, aes(fill=code_level, y=value, x=fish_ship)) + 
     geom_bar(position="stack", stat="identity") +
     scale_fill_manual(values = c("#CFE2F3", "#C5E0B4","royalblue4","#45818E")) +
     facet_wrap(~bridge_barr) +
     labs(fill = "Sub-theme") +
     theme_ms() +
+    theme(legend.position = "right")+
     xlab("") + 
     ylab("Proportion of theme (%)")
+
+#ggsave("figures/ms_figs/industry/stack_survey.png", width = 7, height = 6, units = c("in"))
 
 #radar plots
 freq_job_survey3 <- freq_job_survey %>%
@@ -808,23 +812,29 @@ freq_job_survey3 <- freq_job_survey %>%
   distinct(id, .keep_all = TRUE) %>%
   select(-c(id))
 
-top_survey <- freq_job_survey3 %>% group_by(fish_ship, bridge_barr) %>% arrange(desc(value)) %>% top_n(3) %>% ungroup()
+top_survey <- freq_job_survey3 %>% 
+                group_by(fish_ship, bridge_barr) %>% 
+                arrange(desc(value)) %>% 
+                top_n(3) %>% 
+                ungroup() %>%
+                select(code_name)
 
-top_bridge <- top_survey %>% 
+top_bridge <- freq_job_survey3 %>%
+  subset(code_name %in% top_survey$code_name) %>% 
   filter(bridge_barr == "Bridge") %>% 
   pivot_wider(names_from = code_name, values_from = value) %>% 
   select(-bridge_barr) %>%
   mutate_all(~replace_na(., 0))
 
-
-top_barrier <- top_survey %>% 
+top_barrier <- freq_job_survey3 %>%
+  subset(code_name %in% top_survey$code_name) %>%
   filter(bridge_barr == "Barrier") %>% 
   pivot_wider(names_from = code_name, values_from = value) %>% 
   select(-bridge_barr) %>%
   mutate_all(~replace_na(., 0))
 
-radar_br_survey <- ggradar::ggradar(top_bridge,
-        values.radar = c(0, 14, 22), 
+ggradar::ggradar(top_bridge,
+        values.radar = c(0, 16, 22), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
@@ -833,9 +843,11 @@ radar_br_survey <- ggradar::ggradar(top_bridge,
         group.colours = c("#F29325", "#007172"),
         legend.position = "bottom", 
         fill = TRUE, 
-        axis.label.size = 3.5)
+        axis.label.size = 3)
 
-radar_ba_survey <- ggradar::ggradar(top_barrier,
+#ggsave("figures/ms_figs/industry/radar_br_survey.png", height = 8, width = 8, units = c("in"))
+
+ggradar::ggradar(top_barrier,
         values.radar = c(0, 17, 28), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
@@ -845,11 +857,25 @@ radar_ba_survey <- ggradar::ggradar(top_barrier,
         group.colours = c("#F29325", "#007172"),
         legend.position = "none", 
         fill = TRUE, 
-        axis.label.size = 3.5)
+        axis.label.size = 3)
 
-stack_survey | radar_br_survey | radar_ba_survey
+#ggsave("figures/ms_figs/industry/radar_ba_survey.png", height = 8, width = 8, units = c("in"))
+
 ```
 
+::: panel-tabset
 
+#### Surveys 
+
+![](images/survey_combo.png){fig-align="center" width="5in", height = "8in"}
+
+#### Literature
+
+:::
 
 ## Result 4: Variations by position (survey only)
+
+
+
+
+
