@@ -672,8 +672,8 @@ guides(color = "none")
 #| echo: false
 #| message: false
 #| warning: false
-#| fig-width: 9
-#| fig-height: 5.5
+#| fig-width: 10
+#| fig-height: 5
 #| fig-align: center
 
 code_vars$broad_location <- as.factor(code_vars$broad_location)
@@ -793,9 +793,12 @@ ggplot(freq_job_survey2, aes(fill=code_level, y=value, x=fish_ship)) +
     geom_bar(position="stack", stat="identity") +
     scale_fill_manual(values = c("#CFE2F3", "#C5E0B4","royalblue4","#45818E")) +
     facet_wrap(~bridge_barr) +
-    labs(fill = "Sub-theme") +
+    labs(fill = "") +
+    guides(fill=guide_legend(nrow=2,byrow=TRUE))+
     theme_ms() +
-    theme(legend.position = "right")+
+    theme(legend.position = "top", 
+          legend.justification = "left", 
+          legend.text = element_text(size = 14, color = "black"))+
     xlab("") + 
     ylab("Proportion of theme (%)")
 
@@ -953,9 +956,12 @@ ggplot(freq_job_lit2, aes(fill=code_level, y=value, x=fish_ship)) +
     geom_bar(position="stack", stat="identity") +
     scale_fill_manual(values = c("#CFE2F3", "#C5E0B4","#45818E")) +
     facet_wrap(~bridge_barr) +
-    labs(fill = "Sub-theme") +
+    labs(fill = "") +
+    guides(fill=guide_legend(nrow=2,byrow=TRUE)) +
     theme_ms() +
-    theme(legend.position = "right")+
+    theme(legend.position = "top", 
+          legend.justification = "left", 
+          legend.text = element_text(size = 14, color = "black")) +
     xlab("") + 
     ylab("Proportion of theme (%)")
 
@@ -1121,9 +1127,13 @@ ggplot(freq_pos_survey2, aes(fill=code_level, y=value, x=position)) +
     geom_bar(position="stack", stat="identity") +
     scale_fill_manual(values = c("#CFE2F3", "#C5E0B4","royalblue4","#45818E")) +
     facet_wrap(~bridge_barr) +
-    labs(fill = "Sub-theme") +
+    labs(fill = "") +
     theme_ms() +
-    theme(legend.position = "top")+
+    theme(legend.position = "top", 
+          legend.justification.top = "left", 
+          legend.title = element_text(size = 16, color = "black"), 
+          legend.text = element_text(size = 14, color = "black"))+
+    guides(fill=guide_legend(nrow=2,byrow=TRUE))+
     xlab("") + 
     ylab("Proportion of theme (%)")+
     theme(axis.text.x = element_text(size = 14, color = "black", angle = 60, hjust = 1))
