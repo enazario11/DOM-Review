@@ -181,9 +181,7 @@ ggplot(data = sankey_df,
 
 Plots below are from an old draft of the review themes and sub-themes. If this is the nicest way to plot the codes, I will update the diagram and generate one for the survey themes as well.
 
-![](images/bridges_old.png){fig-align="center" width="70%"}
-
-![](images/barriers_old.png){fig-align="center" width="70%"}
+![](images/sunburst.png){fig-align="center" width="100%"}
 
 ### Option 3 - Table
 
@@ -267,7 +265,7 @@ bar_codes_s %>%
 
 ### Result 2.1: Frequencies according to review and survey
 
-Code appearance frequencies across all bridge **OR** barrier codes. The proportions reported in these figures represent the percent of codes that theme or sub-theme comprises.
+Code appearance counts across all bridge **OR** barrier codes. The values represent counts of themes or sub-themes.
 
 ::: panel-tabset
 ### Literature
@@ -281,52 +279,58 @@ Code appearance frequencies across all bridge **OR** barrier codes. The proporti
 #| fig-align: center
 #| include: FALSE
 
-code_sum <- code_freq %>%
-  group_by(bridge_barr) %>%
-  mutate(n_total = sum(total)) %>%
-  ungroup() %>%
-  group_by(code_cat) %>% 
-  mutate(n_subtotal = sum(total)) %>%
-  summarise(value = n_subtotal/n_total) %>%
+  code_sum <- code_freq %>%
+  #mutate(n_total = sum(total)) %>%
+  #group_by(code_cat) %>% 
+  #mutate(n_subtotal = sum(total)) %>%
+  #summarise(value = n_subtotal/n_total) %>%
   rename("br_ba" = code_cat) %>%
-  mutate(percent_label = scales::percent(value, accuracy = 1), 
-         percent = if_else(br_ba == "Data barrier" | br_ba == "Ecological barrier" | br_ba == "Social barrier", value, -value),
-         code_level = if_else(br_ba %in% c("Ecological barrier", "Ecological bridge"), "Ecological bridge or barrier", 
-                              if_else(br_ba %in% c("Data barrier", "Data bridge"), "Data bridge or barrier",
-                              if_else(br_ba %in% c("Social barrier", "Social bridge"), "Social bridge or barrier", NA))), 
+  # mutate(percent_label = scales::percent(value, accuracy = 1), 
+  #        percent = if_else(br_ba == "Data barrier" | br_ba == "Ecological barrier" | br_ba == "Social barrier", value, -value),
+  #        code_level = if_else(br_ba %in% c("Ecological barrier", "Ecological bridge"), "Ecological bridge or barrier", 
+  #                             if_else(br_ba %in% c("Data barrier", "Data bridge"), "Data bridge or barrier",
+  #                             if_else(br_ba %in% c("Social barrier", "Social bridge"), "Social bridge or barrier", NA))), 
+  #        code_brba = if_else(br_ba %in% c("Data bridge", "Ecological bridge", "Social bridge"), "bridge", "barrier")) %>%
+  mutate(percent = if_else(br_ba == "Data barrier" | br_ba == "Ecological barrier" | br_ba == "Social barrier", -total, total),
+         code_level = if_else(br_ba %in% c("Ecological barrier", "Ecological bridge"), "Ecological", 
+                              if_else(br_ba %in% c("Data barrier", "Data bridge"), "Data",
+                              if_else(br_ba %in% c("Social barrier", "Social bridge"), "Social", NA))), 
          code_brba = if_else(br_ba %in% c("Data bridge", "Ecological bridge", "Social bridge"), "bridge", "barrier")) %>%
-  group_by(code_level) %>%
+  group_by(code_brba, code_level) %>%
+  summarize(value = sum(percent)) %>%
+  mutate(value_label = ifelse(code_brba == "barrier", value*-1, value)) %>%
   distinct()
 
-code_sum$code_level <- factor(code_sum$code_level, levels = c("Social bridge or barrier", "Ecological bridge or barrier", "Data bridge or barrier"))
-code_sum$code_brba <- factor(code_sum$code_brba, levels = c("bridge", "barrier"))
+code_sum$code_level <- factor(code_sum$code_level, levels = c("Social", "Ecological", "Data"))
+code_sum$code_brba <- factor(code_sum$code_brba, levels = c("barrier", "bridge"))
 
 ggplot(code_sum, aes(x = code_level, 
-             y = percent,
+             y = value,
              fill = code_brba)) +
   geom_col(width = 0.7) +
-  geom_text(aes(label = percent_label),
-            position = position_stack(vjust = 0.65),
+  geom_text(aes(label = value_label),
+            position = position_stack(vjust = 0.5),
             color = "black", 
             size = 5) +
-  ylim(-0.4,0.7)+
+  #ylim(-0.4,0.7)+
   coord_flip() +
   scale_x_discrete() +
-  scale_fill_manual(values = c("goldenrod", "lightskyblue3"), labels = c("Bridge frequency", "Barrier frequency")) +
+  scale_fill_manual(values = c("goldenrod", "lightskyblue3"), labels = c("Barrier", "Bridge")) +
   theme_minimal() +
   theme(axis.title.y = element_blank(),
         axis.title.x = element_blank(),
         axis.text.x =element_blank(),
         axis.text.y = element_text(size = 20, color = "black"),
         panel.grid = element_blank(),
-        legend.position = c(-0.17, 0.99),
+        legend.position = c(-0.05, 1),
         legend.text = element_text(size = 16, color = "black"),
         strip.text.y.right = element_text(angle = 0, size = 16)) +
   geom_hline(yintercept = 0.0, linewidth = 1) + 
   labs(fill = "")+ 
   guides(fill = guide_legend(nrow = 1))
 
-#ggsave("figures/ms_figs/all_freq/all_freq.png", width = 8, height = 5, units = ("in"))
+#ggsave("figures/ms_figs/all_freq/all_freq.png", width = 8, height = 6, units = ("in"))
+#ggsave("figures/slides_svg/freq_lit.svg", width = 8, height = 6, units = ("in"))
 ```
 
 ```{r}
@@ -340,27 +344,28 @@ ggplot(code_sum, aes(x = code_level,
 #reformat data
 code_sum_br <- code_freq %>%
   filter(bridge_barr == "Bridge") %>%
-  mutate(n_total = sum(total)) %>%
-  group_by(code_cat, code_name) %>%
-  summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
-  mutate(percent = scales::percent(value, accuracy = 1), 
+  #mutate(n_total = sum(total)) %>%
+  #group_by(code_cat, code_name) %>%
+  #summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
+  mutate(#percent = scales::percent(value, accuracy = 1), 
          code_name = factor(code_name)) %>%
   ungroup() %>%
   group_by(code_cat) %>%
-  arrange(code_name, desc(percent))
+  arrange(code_name, desc(total))
 
 
 #plot
-br_freq <- ggplot(code_sum_br, aes(x = value*100, y = reorder(code_name, value))) + 
-  geom_point(size = 5, color = "goldenrod") + 
+br_freq <- ggplot(code_sum_br, aes(x = total, y = reorder(code_name, total))) + 
+  geom_point(size = 5, color = "lightskyblue3") + 
   # scale_x_continuous(limits = c(0, 30), 
   #                    breaks = seq(0, 30, 5), 
   #                    name = "Percent appearance (%)") +
   theme_minimal() +
   facet_wrap("code_cat", ncol = 1, scales = "free_y") +
-  scale_x_reverse(limits = c(30, 0), 
+  scale_x_continuous(limits = c(0, 75), 
                   #breaks = seq(0, 30, 5), 
-                  name = "Percent appearance (%)")+
+                  name = "Sub-theme count (#)")+
+  scale_y_discrete(position = "right") +
   theme(strip.placement = "outside",
         strip.text = element_text(face = "bold", size = 14, hjust = 0), 
         axis.text = element_text(size = 12, color = "black"), 
@@ -382,23 +387,21 @@ br_freq <- ggplot(code_sum_br, aes(x = value*100, y = reorder(code_name, value))
 #reformat data
 code_sum_ba <- code_freq %>%
   filter(bridge_barr == "Barrier") %>%
-  mutate(n_total = sum(total)) %>%
-  group_by(code_cat, code_name) %>%
-  summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
-  mutate(percent = scales::percent(value, accuracy = 1), 
+  #mutate(n_total = sum(total)) %>%
+  #group_by(code_cat, code_name) %>%
+  #summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
+  mutate(#percent = scales::percent(value, accuracy = 1), 
          code_name = factor(code_name)) %>%
   ungroup() %>%
   group_by(code_cat) %>%
-  arrange(code_name, desc(percent))
-
+  arrange(code_name, desc(total))
 
 #plot
-ba_freq <- ggplot(code_sum_ba, aes(x = value*100, y = reorder(code_name, value))) + 
-  geom_point(size = 5, color = "lightskyblue3") + 
-  scale_x_continuous(limits = c(0, 30), 
-                     breaks = seq(0, 30, 10), 
-                     name = "Percent appearance (%)") +
-  scale_y_discrete(position = "right") +
+ba_freq <- ggplot(code_sum_ba, aes(x = total, y = reorder(code_name, total))) + 
+  geom_point(size = 5, color = "goldenrod") + 
+  scale_x_reverse(limits = c(75, 0), 
+                     breaks = seq(0,60, 20), 
+                     name = "Sub-theme count (#)") +
   theme_minimal() +
   facet_wrap("code_cat", ncol = 1, scales = "free_y") +
   theme(strip.placement = "outside",
@@ -407,7 +410,7 @@ ba_freq <- ggplot(code_sum_ba, aes(x = value*100, y = reorder(code_name, value))
         axis.title = element_text(size = 14, color = "black")) +
   ylab("")
 
-#ggsave("figures/ms_figs/all_freq/ba_freq.png", width = 8, height = 8, units = c("in"))
+#ggsave("figures/ms_figs/all_freq/ba_freq.png", width = 7.5, height = 8, units = c("in"))
 
 ```
 
@@ -424,53 +427,49 @@ ba_freq <- ggplot(code_sum_ba, aes(x = value*100, y = reorder(code_name, value))
 #| fig-align: center
 
 #theme bridge/barrier
-code_sum_s <- code_freq_s %>%
-  group_by(bridge_barr) %>%
-  mutate(n_total = sum(total)) %>%
-  ungroup() %>%
-  group_by(code_cat) %>% 
-  mutate(n_subtotal = sum(total)) %>%
-  summarise(value = n_subtotal/n_total) %>%
+ code_sum_s <- code_freq_s %>%
   rename("br_ba" = code_cat) %>%
-  mutate(percent_label = scales::percent(value, accuracy = 1), 
-         percent = if_else(br_ba == "Data barrier" | br_ba == "Ecological barrier" | br_ba == "Social barrier" | br_ba == "Implementation barrier", value, -value),
-         code_level = if_else(br_ba %in% c("Ecological barrier", "Ecological bridge"), "Ecological bridge or barrier", 
-                              if_else(br_ba %in% c("Data barrier", "Data bridge"), "Data bridge or barrier",
-                              if_else(br_ba %in% c("Social barrier", "Social bridge"), "Social bridge or barrier", 
-                              if_else(br_ba %in% c("Implementation bridge", "Implementation barrier"), "Implementation bridge or barrier", NA)))), 
+  mutate(percent = if_else(br_ba == "Data barrier" | br_ba == "Ecological barrier" | br_ba == "Social barrier" | br_ba == "Implementation barrier", -total, total),
+         code_level = if_else(br_ba %in% c("Ecological barrier", "Ecological bridge"), "Ecological", 
+                              if_else(br_ba %in% c("Data barrier", "Data bridge"), "Data",
+                              if_else(br_ba %in% c("Implementation barrier", "Implementation bridge"), "Implementation",
+                              if_else(br_ba %in% c("Social barrier", "Social bridge"), "Social", NA)))),
          code_brba = if_else(br_ba %in% c("Data bridge", "Ecological bridge", "Social bridge", "Implementation bridge"), "bridge", "barrier")) %>%
-  group_by(code_level) %>%
+  group_by(code_brba, code_level) %>%
+  summarize(value = sum(percent)) %>%
+  mutate(value_label = ifelse(code_brba == "barrier", value*-1, value)) %>%
   distinct()
 
-code_sum_s$code_level <- factor(code_sum_s$code_level, levels = c("Implementation bridge or barrier", "Social bridge or barrier", "Ecological bridge or barrier", "Data bridge or barrier"))
-code_sum_s$code_brba <- factor(code_sum_s$code_brba, levels = c("bridge", "barrier"))
+code_sum_s$code_level <- factor(code_sum_s$code_level, levels = c("Implementation", "Social", "Ecological", "Data"))
+code_sum_s$code_brba <- factor(code_sum_s$code_brba, levels = c("barrier", "bridge"))
 
 all_freq_survey <- ggplot(code_sum_s, aes(x = code_level, 
-             y = percent,
+             y = value,
              fill = code_brba)) +
   geom_col(width = 0.7) +
-  geom_text(aes(label = percent_label),
-            position = position_stack(vjust = 0.65),
+  geom_text(aes(label = value_label),
+            position = position_stack(vjust = 0.5),
             color = "black", 
             size = 5) +
-  ylim(-0.55,0.7)+
+  #ylim(-0.55,0.7)+
   coord_flip() +
   scale_x_discrete() +
-  scale_fill_manual(values = c("goldenrod", "lightskyblue3"), labels = c("Bridge frequency", "Barrier frequency")) +
+  scale_fill_manual(values = c("goldenrod", "lightskyblue3"), labels = c("Barrier", "Bridge")) +
   theme_minimal() +
   theme(axis.title.y = element_blank(),
         axis.title.x = element_blank(),
         axis.text.x =element_blank(),
-        axis.text.y = element_text(size = 26, color = "black"),
+        axis.text.y = element_text(size = 20, color = "black"),
         panel.grid = element_blank(),
-        legend.position = c(-0.17, 0.99),
-        legend.text = element_text(size = 20, color = "black"),
-        strip.text.y.right = element_text(angle = 0, size = 18)) +
+        legend.position = c(-0.05, 1),
+        legend.text = element_text(size = 16, color = "black"),
+        strip.text.y.right = element_text(angle = 0, size = 16)) +
   geom_hline(yintercept = 0.0, linewidth = 1) + 
   labs(fill = "")+ 
   guides(fill = guide_legend(nrow = 1))
 
-#ggsave("figures/ms_figs/all_freq/all_freq_survey.png", width = 13, height = 8, units = ("in"))
+#ggsave("figures/ms_figs/all_freq/all_freq_survey.png", width = 8, height = 6, units = ("in"))
+#ggsave("figures/slides_svg/freq_survey.svg", width = 8, height = 6, units = ("in"))
 
 #bridge freq
 #reformat data
@@ -478,26 +477,27 @@ code_freq_s$code_cat <- factor(code_freq_s$code_cat, levels = c("Data bridge", "
 
 code_sum_br_s <- code_freq_s %>%
   filter(bridge_barr == "Bridge") %>%
-  mutate(n_total = sum(total)) %>%
-  group_by(code_cat, code_name) %>%
-  summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
-  mutate(percent = scales::percent(value, accuracy = 1), 
+  #mutate(n_total = sum(total)) %>%
+  #group_by(code_cat, code_name) %>%
+  #summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
+  mutate(#percent = scales::percent(value, accuracy = 1), 
          code_name = factor(code_name)) %>%
   ungroup() %>%
   group_by(code_cat) %>%
-  arrange(code_name, desc(percent))
+  arrange(code_name, desc(total))
 
 #plot
-br_freq_s <- ggplot(code_sum_br_s, aes(x = value*100, y = reorder(code_name, value))) + 
-  geom_point(size = 5, color = "goldenrod") + 
+br_freq_s <- ggplot(code_sum_br_s, aes(x = total, y = reorder(code_name, total))) + 
+  geom_point(size = 5, color = "lightskyblue3") + 
   # scale_x_continuous(limits = c(0, 30), 
   #                    breaks = seq(0, 30, 5), 
   #                    name = "Percent appearance (%)") +
   theme_minimal() +
   facet_wrap("code_cat", ncol = 1, scales = "free_y") +
-  scale_x_reverse(limits = c(20, 0), 
+  scale_x_continuous(limits = c(0, 20), 
                   #breaks = seq(0, 30, 5), 
-                  name = "Percent appearance (%)")+
+                  name = "Sub-theme count (#)")+
+  scale_y_discrete(position = "right") +
   theme(strip.placement = "outside",
         strip.text = element_text(face = "bold", size = 14, hjust = 0), 
         axis.text = element_text(size = 12, color = "black"), 
@@ -510,32 +510,31 @@ br_freq_s <- ggplot(code_sum_br_s, aes(x = value*100, y = reorder(code_name, val
 #reformat data
 code_sum_ba_s <- code_freq_s %>%
   filter(bridge_barr == "Barrier") %>%
-  mutate(n_total = sum(total)) %>%
-  group_by(code_cat, code_name) %>%
-  summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
-  mutate(percent = scales::percent(value, accuracy = 1), 
+  #mutate(n_total = sum(total)) %>%
+  #group_by(code_cat, code_name) %>%
+  #summarise(value = total/n_total) %>% #percentages represent total number of bridge or barriers codes that code represents
+  mutate(#percent = scales::percent(value, accuracy = 1), 
          code_name = factor(code_name)) %>%
   ungroup() %>%
   group_by(code_cat) %>%
-  arrange(code_name, desc(percent))
+  arrange(code_name, desc(total))
 
 
 #plot
-ba_freq_s <- ggplot(code_sum_ba_s, aes(x = value*100, y = reorder(code_name, value))) + 
-  geom_point(size = 5, color = "lightskyblue3") + 
-  scale_x_continuous(limits = c(0, 20), 
-                     breaks = seq(0, 20, 10), 
-                     name = "Percent appearance (%)") +
-  scale_y_discrete(position = "right") +
+ba_freq_s <- ggplot(code_sum_ba_s, aes(x = total, y = reorder(code_name, total))) + 
+  geom_point(size = 5, color = "goldenrod") + 
+  scale_x_reverse(limits = c(20, 0), 
+                     breaks = seq(0, 20, 5), 
+                     name = "Sub-theme count (#)") +
   theme_minimal() +
   facet_wrap("code_cat", ncol = 1, scales = "free_y") +
   theme(strip.placement = "outside",
-        strip.text = element_text(face = "bold", size = 16, hjust = 1), 
+        strip.text = element_text(face = "bold", size = 14, hjust = 1), 
         axis.text = element_text(size = 12, color = "black"), 
         axis.title = element_text(size = 14, color = "black")) +
   ylab("")
 
-#ggsave("figures/ms_figs/all_freq/ba_freq_survey.png", width = 6, height = 9, units = c("in"))
+#ggsave("figures/ms_figs/all_freq/ba_freq_survey.png", width = 6, height = 8, units = c("in"))
 
 ```
 
@@ -553,6 +552,7 @@ Grey is the number of DOM publications per year, while blue is the number of tim
 #| fig-width: 7
 #| fig-height: 5
 #| fig-align: center
+#| include: false
 
 code_ts <- code_vars %>% 
   mutate(year = str_extract_all(Doc, "\\d+\\.?\\d*"), 
@@ -652,8 +652,7 @@ ylab("")+
 xlab("")+
 labs(fill = "Number of co-occurences")+
 theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.3, size = 14, face = "bold", color = x_colors[levels(code_rel_melt_h$code1)]), 
-      axis.text.y = element_text(size = 14, face = "bold", color = y_colors[levels(code_rel_melt_h$code2)]), 
-      panel.background = element_blank())+
+      axis.text.y = element_text(size = 14, face = "bold", color = y_colors[levels(code_rel_melt_h$code2)]))+
 geom_text(aes(label = total))+
 scale_color_manual(values = c("black", "#00000000"))+
 guides(color = "none")
@@ -672,7 +671,7 @@ guides(color = "none")
 #| echo: false
 #| message: false
 #| warning: false
-#| fig-width: 10
+#| fig-width: 9
 #| fig-height: 5
 #| fig-align: center
 
@@ -681,7 +680,7 @@ codes_LU <- code_vars[!duplicated(code_vars$Lit_unit), ]
 
 consv <- codes_LU %>%
   gather(col, consv_topic, reason1:reason3) %>%
-  subset(select = consv_topic)
+  select(consv_topic)
 
 consv_s <- consv %>%
   group_by(consv_topic) %>%
@@ -724,6 +723,54 @@ consv_bar <- ggplot(consv_s) +
   )
 
 consv_bar
+
+consv <- codes_LU %>%
+  gather(col, consv_topic, reason1:reason3) %>%
+  gather(test, fishery_channel, fishery_or_channel1:fishery_or_channel4) %>%
+  select(c(consv_topic, fishery_channel)) %>%
+  mutate(consv_bin = paste0(consv_topic, " - ", fishery_channel))
+
+consv_s <- consv %>%
+  group_by(consv_topic, consv_bin) %>%
+  filter(consv_topic != "NA") %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  mutate(perc = count/sum(count)*100) 
+
+consv_bar2 <- ggplot(consv_s) +
+  geom_bar(aes(x = perc, y = reorder(consv_bin, perc), fill = consv_topic), width = 0.6, stat = "identity")+
+  scale_x_continuous(position = "top", 
+                     expand = c(0,0), 
+                     limits = c(0, 45))+
+  scale_y_discrete(expand = expansion(add = c(0,0))) + 
+  theme(
+    # Set background color to white
+    panel.background = element_rect(fill = "white"),
+    # Set the color and the width of the grid lines for the horizontal axis
+    panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
+    # Remove tick marks by setting their length to 0
+    axis.ticks.length = unit(0, "mm"),
+    # Remove the title for both axes
+    axis.title = element_blank(),
+    # Only left line of the vertical axis is painted in black
+    axis.line.y.left = element_line(color = "black"),
+    # Remove labels from the vertical axis
+    axis.text.y = element_blank(),
+    # But customize labels for the horizontal axis
+    axis.text.x = element_text(family = "Arial", size = 12)) + 
+  geom_text(aes(x = perc, y = consv_bin, label = consv_bin),
+    hjust = 0,
+    nudge_x = 0.3,
+    colour = "dodgerblue4",
+    family = "Arial",
+    size = 3.5)+
+  labs(subtitle = "Percent of sum from all articles (%)") + 
+  theme(plot.subtitle = element_text(
+      family = "Arial",
+      size = 13)
+  )
+
+consv_bar2
 ```
 
 ### 3.2: Fishing vs. shipping
@@ -736,7 +783,6 @@ consv_bar
 #| fig-height: 7
 #| fig-align: center
 #| include: false
-
 
 #survey figs
 
@@ -803,19 +849,22 @@ ggplot(freq_job_survey2, aes(fill=code_level, y=value, x=fish_ship)) +
     ylab("Proportion of theme (%)")
 
 #ggsave("figures/ms_figs/industry/stack_survey.png", width = 7, height = 6, units = c("in"))
+#ggsave("figures/slides_svg/stack_survey.svg", width = 7, height = 6, units = c("in"))
 
 #radar plots
 freq_job_survey3 <- freq_job_survey %>%
-  group_by(fish_ship, bridge_barr) %>%
-  mutate(n_total = sum(total)) %>%
-  ungroup() %>%
-  group_by(fish_ship, bridge_barr, code_name) %>% 
-  mutate(n_subtotal = sum(total)) %>%
-  reframe(value = (n_subtotal/n_total)*100) %>%
-  ungroup() %>%
+  # group_by(fish_ship, bridge_barr) %>%
+  # mutate(n_total = sum(total)) %>%
+  # ungroup() %>%
+  # group_by(fish_ship, bridge_barr, code_name) %>%
+  # mutate(n_subtotal = sum(total)) %>%
+  # reframe(value = (n_subtotal/n_total)*100) %>%
+  # ungroup() %>%
   mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
   distinct(id, .keep_all = TRUE) %>%
-  select(-c(id))
+  select(-c(id)) %>%
+  group_by(fish_ship, bridge_barr, code_name) %>%
+  summarise(value = sum(total))
 
 top_survey <- freq_job_survey3 %>% 
                 group_by(fish_ship, bridge_barr) %>% 
@@ -825,13 +874,15 @@ top_survey <- freq_job_survey3 %>%
                 select(code_name)
 
 top_bridge <- freq_job_survey3 %>%
+  ungroup() %>%
   subset(code_name %in% top_survey$code_name) %>% 
-  filter(bridge_barr == "Bridge") %>% 
+  filter(bridge_barr == "Bridge") %>%
   pivot_wider(names_from = code_name, values_from = value) %>% 
   select(-bridge_barr) %>%
-  mutate_all(~replace_na(., 0))
+  mutate_all(~replace_na(., 0)) 
 
 top_barrier <- freq_job_survey3 %>%
+  ungroup() %>%
   subset(code_name %in% top_survey$code_name) %>%
   filter(bridge_barr == "Barrier") %>% 
   pivot_wider(names_from = code_name, values_from = value) %>% 
@@ -839,32 +890,34 @@ top_barrier <- freq_job_survey3 %>%
   mutate_all(~replace_na(., 0))
 
 ggradar::ggradar(top_bridge,
-        values.radar = c(0, 16, 22), 
+        values.radar = c(0, 2, 4), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
         gridline.mid.colour = "gray60",
         gridline.max.colour = "gray60",
-        group.colours = c("#F29325", "#007172"),
+        group.colours = c("#F29325", "#007172"),#007172
         legend.position = "bottom", 
         fill = TRUE, 
         axis.label.size = 3)
 
 #ggsave("figures/ms_figs/industry/radar_br_survey.png", height = 8, width = 8, units = c("in"))
+#ggsave("figures/slides_svg/radar_br.svg", height = 8, width = 8, units = c("in"))
 
 ggradar::ggradar(top_barrier,
-        values.radar = c(0, 17, 28), 
+        values.radar = c(0, 1, 3), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
         gridline.mid.colour = "gray60",
         gridline.max.colour = "gray60",
-        group.colours = c("#F29325", "#007172"),
+        group.colours = c("#F29325", "#007172"),#007172
         legend.position = "none", 
         fill = TRUE, 
         axis.label.size = 3)
 
 #ggsave("figures/ms_figs/industry/radar_ba_survey.png", height = 8, width = 8, units = c("in"))
+#ggsave("figures/slides_svg/radar_ba.svg", height = 8, width = 8, units = c("in"))
 
 #get sample sizes of survey respondants by position
 n_job_survey <- code_vars_s %>% 
@@ -872,7 +925,6 @@ n_job_survey <- code_vars_s %>%
   janitor::clean_names()
 
 table(n_job_survey$survey)
-
 
 ```
 
@@ -969,16 +1021,18 @@ ggplot(freq_job_lit2, aes(fill=code_level, y=value, x=fish_ship)) +
 
 #radar plots
 freq_job_lit3 <- freq_job_lit %>%
-  group_by(fish_ship, bridge_barr) %>%
-  mutate(n_total = sum(total)) %>%
-  ungroup() %>%
-  group_by(fish_ship, bridge_barr, code_name) %>% 
-  mutate(n_subtotal = sum(total)) %>%
-  reframe(value = (n_subtotal/n_total)*100) %>%
-  ungroup() %>%
+  # group_by(fish_ship, bridge_barr) %>%
+  # mutate(n_total = sum(total)) %>%
+  # ungroup() %>%
+  # group_by(fish_ship, bridge_barr, code_name) %>% 
+  # mutate(n_subtotal = sum(total)) %>%
+  # reframe(value = (n_subtotal/n_total)*100) %>%
+  # ungroup() %>%
   mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
   distinct(id, .keep_all = TRUE) %>%
-  select(-c(id))
+  select(-c(id)) %>%
+  group_by(fish_ship, bridge_barr, code_name) %>%
+  summarise(value = sum(total))
 
 top_lit <- freq_job_lit3 %>% 
                 group_by(fish_ship, bridge_barr) %>% 
@@ -991,6 +1045,7 @@ top_bridge <- freq_job_lit3 %>%
   subset(code_name %in% top_lit$code_name) %>% 
   filter(bridge_barr == "Bridge") %>% 
   pivot_wider(names_from = code_name, values_from = value) %>% 
+  ungroup() %>%
   select(-bridge_barr) %>%
   mutate_all(~replace_na(., 0))
 
@@ -998,11 +1053,12 @@ top_barrier <- freq_job_lit3 %>%
   subset(code_name %in% top_lit$code_name) %>%
   filter(bridge_barr == "Barrier") %>% 
   pivot_wider(names_from = code_name, values_from = value) %>% 
+  ungroup() %>%
   select(-bridge_barr) %>%
   mutate_all(~replace_na(., 0))
 
 ggradar::ggradar(top_bridge,
-        values.radar = c(0, 8, 16), 
+        values.radar = c(0, 15, 30), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
@@ -1016,7 +1072,7 @@ ggradar::ggradar(top_bridge,
 #ggsave("figures/ms_figs/industry/radar_br_lit.png", height = 8, width = 8, units = c("in"))
 
 ggradar::ggradar(top_barrier,
-        values.radar = c(0, 17, 37), 
+        values.radar = c(0, 15, 30), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
