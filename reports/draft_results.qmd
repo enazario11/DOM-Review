@@ -570,7 +570,7 @@ ggplot(code_ts, aes(as.numeric(Year))) +
         axis.title = element_text(size = 16, color = "black")) 
 ```
 
-### Result 2.3: Heat maps of theme co-occurence
+### Result 2.2: Heat maps of theme co-occurence
 
 This heatmap represents number of times two codes co-occurered together in the same article, or "theme co-occurence". I have filtered totals greater than or equal to 11, which was the 90% quantile of the co-occurrence total data set. Blue text represents data bridges and barriers, grey text represents ecological bridges and barriers, and orange text represents social bridges and barriers.
 
@@ -664,8 +664,8 @@ guides(color = "none")
 #| echo: false
 #| message: false
 #| warning: false
-#| fig-width: 9
-#| fig-height: 5
+#| fig-width: 10
+#| fig-height: 4
 #| fig-align: center
 
 code_vars$broad_location <- as.factor(code_vars$broad_location)
@@ -723,7 +723,7 @@ consv_bar
 #| message: false
 #| warning: false
 #| fig-width: 9
-#| fig-height: 10
+#| fig-height: 12
 #| fig-align: center
 consv <- codes_LU %>%
   gather(col, consv_topic, reason1:reason3) %>%
