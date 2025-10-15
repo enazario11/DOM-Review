@@ -860,9 +860,9 @@ freq_job_survey3 <- freq_job_survey %>%
   # mutate(n_subtotal = sum(total)) %>%
   # reframe(value = (n_subtotal/n_total)*100) %>%
   # ungroup() %>%
-  mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
-  distinct(id, .keep_all = TRUE) %>%
-  select(-c(id)) %>%
+  #mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
+  #distinct(id, .keep_all = TRUE) %>%
+  #select(-c(id))
   group_by(fish_ship, bridge_barr, code_name) %>%
   summarise(value = sum(total))
 
@@ -890,7 +890,7 @@ top_barrier <- freq_job_survey3 %>%
   mutate_all(~replace_na(., 0))
 
 ggradar::ggradar(top_bridge,
-        values.radar = c(0, 2, 4), 
+        values.radar = c(0, 5, 10), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
@@ -905,7 +905,7 @@ ggradar::ggradar(top_bridge,
 #ggsave("figures/slides_svg/radar_br.svg", height = 8, width = 8, units = c("in"))
 
 ggradar::ggradar(top_barrier,
-        values.radar = c(0, 1, 3), 
+        values.radar = c(0, 3, 6), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
@@ -1028,9 +1028,9 @@ freq_job_lit3 <- freq_job_lit %>%
   # mutate(n_subtotal = sum(total)) %>%
   # reframe(value = (n_subtotal/n_total)*100) %>%
   # ungroup() %>%
-  mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
-  distinct(id, .keep_all = TRUE) %>%
-  select(-c(id)) %>%
+  # mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
+  # distinct(id, .keep_all = TRUE) %>%
+  # select(-c(id)) %>%
   group_by(fish_ship, bridge_barr, code_name) %>%
   summarise(value = sum(total))
 
@@ -1058,7 +1058,7 @@ top_barrier <- freq_job_lit3 %>%
   mutate_all(~replace_na(., 0))
 
 ggradar::ggradar(top_bridge,
-        values.radar = c(0, 15, 30), 
+        values.radar = c(0, 20, 40), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
@@ -1072,7 +1072,7 @@ ggradar::ggradar(top_bridge,
 #ggsave("figures/ms_figs/industry/radar_br_lit.png", height = 8, width = 8, units = c("in"))
 
 ggradar::ggradar(top_barrier,
-        values.radar = c(0, 15, 30), 
+        values.radar = c(0, 15, 35), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
@@ -1083,7 +1083,7 @@ ggradar::ggradar(top_barrier,
         fill = TRUE, 
         axis.label.size = 3)
 
-#ggsave("figures/ms_figs/industry/radar_ba_lit.png", height = 8, width = 8, units = c("in"))
+ggsave("figures/ms_figs/industry/radar_ba_lit.png", height = 8, width = 8, units = c("in"))
 
 
 #get sample sizes of survey respondants by position
