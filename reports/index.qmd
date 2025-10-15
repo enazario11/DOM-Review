@@ -13,3 +13,5 @@ fontcolor: "#134f5c"
 ## DOM systematic review and end-user surveys TOC
 
 [See here](lit_codes_explore.html) for the initial visualizations of the codes from the literature review
+
+[See here](draft_results.html) for the drafted results that may go in the manuscript
