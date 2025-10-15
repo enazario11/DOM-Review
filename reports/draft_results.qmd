@@ -103,16 +103,11 @@ theme_ms <- function(){
 
 ## Result 1: Bridges and barriers according to review and survey
 
-Here I've presented three options for presenting the themes and sub-themes identified in the review and surveys. I'd love feedback on which option or combination of options best visualize the codes! Depending on your feedback, I'll then spend time cleaning up the best option.
-
-### Option 1 - Sankey diagram
-
-Plot below only presents the review themes and sub-themes. If this is the best way to communicate the codes, I will add a diagram visualizing the survey codes.
-
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
+#| include: false
 #| fig-width: 15
 #| fig-height: 15
 
@@ -177,13 +172,15 @@ ggplot(data = sankey_df,
   scale_color_manual(values = c("#F48136", "#F46036", "#F44336", "#CFE2F3", "#C5E0B4", "#45818E"))
 ```
 
-### Option 2 - Sunburst figure
+### Sunburst figure
 
-Plots below are from an old draft of the review themes and sub-themes. If this is the nicest way to plot the codes, I will update the diagram and generate one for the survey themes as well.
+Visualizes each of the themes (Data, Ecological, Social, and Implementation) identified in the literature and surveys. Also visualizes the sub-themes within each theme bin. Literature themes are on top while surveys are on the bottom. Cooler colors indicate bridges while warmer ones represent barriers. The small text/poor resolution should be resolved when the figure is viewed as a pdf!
 
 ![](images/sunburst.png){fig-align="center" width="100%"}
 
-### Option 3 - Table
+### Table
+ 
+May include in the supplemental, but could be redundant to the sunburst diagram.
 
 ::: panel-tabset
 #### Review: Bridge themes
@@ -541,10 +538,6 @@ ba_freq_s <- ggplot(code_sum_ba_s, aes(x = total, y = reorder(code_name, total))
 ![](images/br_ba_freq_survey.png){fig-align="center" width="10in", height = "12in"}
 :::
 
-### Result 2.2: Time series of top theme from literature, co-management
-
-Grey is the number of DOM publications per year, while blue is the number of times co-management and communication was referenced. Whanted to see if this code was referenced more over time, but seems that it just tracks the number of DOM publications. Likely won't include.
-
 ```{r}
 #| echo: false
 #| message: false
@@ -723,7 +716,15 @@ consv_bar <- ggplot(consv_s) +
   )
 
 consv_bar
+```
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 10
+#| fig-align: center
 consv <- codes_LU %>%
   gather(col, consv_topic, reason1:reason3) %>%
   gather(test, fishery_channel, fishery_or_channel1:fishery_or_channel4) %>%
@@ -1083,7 +1084,7 @@ ggradar::ggradar(top_barrier,
         fill = TRUE, 
         axis.label.size = 3)
 
-ggsave("figures/ms_figs/industry/radar_ba_lit.png", height = 8, width = 8, units = c("in"))
+#("figures/ms_figs/industry/radar_ba_lit.png", height = 8, width = 8, units = c("in"))
 
 
 #get sample sizes of survey respondants by position
