@@ -37,10 +37,12 @@ code_freq <- read.csv(here("data/code_freq_lit.csv"))
 code_vars <- read.csv(here("data/code_w_vars_lit.csv"))
 keywords <- read.csv(here("data/keywords.csv"))
 code_rel <- read.csv(here("data/code_rel.csv"))
+code_rel2 <- read.csv(here("data/br_ba_code_lit.csv"))
 
 #survey data
 code_vars_s <- read.csv(here("data/surveys/code_w_vars.csv"))
 code_freq_s <- read.csv(here("data/surveys/code_freq.csv"))
+code_rel_s <- read.csv(here("data/surveys/br_ba_code_survey.csv"))
 
 #change codes to new names 
   #code_freq
@@ -572,7 +574,7 @@ ggplot(code_ts, aes(as.numeric(Year))) +
 
 ### Result 2.2: Heat maps of theme co-occurence
 
-This heatmap represents number of times two codes co-occurered together in the same article, or "theme co-occurence". I have filtered totals greater than or equal to 11, which was the 90% quantile of the co-occurrence total data set. Blue text represents data bridges and barriers, grey text represents ecological bridges and barriers, and orange text represents social bridges and barriers.
+This heatmap represents number of times two codes co-occurered together in the same article, or "theme co-occurence". Bridges are placed on rows and barriers are separated by columns. Literature codes are on the top and survey codes are on the bottom. 
 
 ```{r}
 #| echo: false
@@ -583,7 +585,8 @@ This heatmap represents number of times two codes co-occurered together in the s
 #| fig-align: center
 #| include: FALSE
 
-code_rel_melt <- reshape::melt(code_rel)
+#literature
+code_rel_melt <- reshape::melt(code_rel2)
 code_rel_melt$variable <- gsub(".", " ", code_rel_melt$variable, fixed = TRUE)
 
 code_rel_melt <- code_rel_melt %>%
@@ -595,66 +598,126 @@ colnames(code_rel_melt) <- c("brba_code1", "code1", "code2", "total")
 
 #add brba column to second code col
 code_rel_melt2 <- code_rel_melt
-code_rel_melt2$brba_code2 <- NA
+#code_rel_melt2$brba_code2 <- NA
 
 code_rel_melt2$code2[code_rel_melt2$code2 == "Fine scale management appropriate for target species"] <- "Fine-scale management appropriate for target species"
 code_rel_melt2$code2[code_rel_melt2$code2 == "Pre existing regulation and management institutions"] <- "Pre-existing regulation and management institutions"
 code_rel_melt2$code2[code_rel_melt2$code2 == "Co management and communication"] <- "Co-management and communication"
 
-for(i in 1:nrow(code_rel_melt2)){
-  code_temp = code_rel_melt2$code2[i]
+# for(i in 1:nrow(code_rel_melt2)){
+#   code_temp = code_rel_melt2$code2[i]
+# 
+#   brba_temp = code_rel_melt2 %>% filter(code1 == code_temp & code2 == code_temp)
+#   brba_code_temp = brba_temp$brba_code1[1]
+# 
+#   code_rel_melt2$brba_code2[i] <- brba_code_temp
+# }
+# 
+# code_rel_melt2$brba_code2[code_rel_melt2$code2 == "Target species is a prey specialist"] <- "Ecological bridge"
 
-  brba_temp = code_rel_melt2 %>% filter(code1 == code_temp & code2 == code_temp)
-  brba_code_temp = brba_temp$brba_code1[1]
-
-  code_rel_melt2$brba_code2[i] <- brba_code_temp
-}
-
-code_rel_melt2$brba_code2[code_rel_melt2$code2 == "Target species is a prey specialist"] <- "Ecological bridge"
-
-group_colors = c("Data Bridge" = "dodgerblue4", "Data Barrier" = "dodgerblue4", "Ecological Bridge" = "honeydew4", "Ecological Barrier" = "honeydew4", "Social Bridge" = "darkorange4", "Social Barrier" = "darkorange4")
+# group_colors = c("Data Bridge" = "dodgerblue4", "Data Barrier" = "dodgerblue4", "Ecological Bridge" = "honeydew4", "Ecological Barrier" = "honeydew4", "Social Bridge" = "darkorange4", "Social Barrier" = "darkorange4")
 
 code_rel_melt_h <- code_rel_melt2 %>%
-  filter(total >= 11) %>%
-  mutate(bor_box = ifelse(total >= 11, "TRUE", "FALSE"), 
-        bor_box = as.factor(bor_box), 
+  #filter(total >= 11) %>%
+  mutate(#bor_box = ifelse(total >= 11, "TRUE", "FALSE"), 
+        #bor_box = as.factor(bor_box), 
         code1 = as.factor(code1), 
         code2 = as.factor(code2))
 
-code_rel_melt_h$bor_box <- factor(code_rel_melt_h$bor_box, levels = c("TRUE", "FALSE"))
+code_rel_melt_h$code1 <- factor(code_rel_melt_h$code1, levels = c(as.character(unique(code_rel_melt_h$code1))))
 
-code_rel_melt_h <- code_rel_melt_h %>%
-  mutate(code1 = reorder(code1, -total, FUN = mean),
-         code2 = reorder(code2, total, FUN = mean))
+code_rel_melt_h$code2 <- factor(code_rel_melt_h$code2, levels =
+c("Need for multispecies management",	"Implementation costs",	"Indirect socioeconomic consequences",	"Discontinuity",	"Poor communication and outreach",	"Poor program implementation", "Model abuse", "Gaps and inaccuracy", "Climate change adding uncertainty to target species habitat use",	"Management scales do not align with system needs"))
 
-unique_x_groups <- code_rel_melt_h %>%
-distinct(code1, brba_code1) %>%
-arrange(code1)
+#code_rel_melt_h$bor_box <- factor(code_rel_melt_h$bor_box, levels = c("TRUE", "FALSE"))
 
-unique_y_groups <- code_rel_melt_h %>%
-distinct(code2, brba_code2) %>%
-arrange(code2)
+# code_rel_melt_h <- code_rel_melt_h %>%
+#   mutate(code1 = reorder(code1, -total, FUN = mean),
+#          code2 = reorder(code2, total, FUN = mean))
 
-x_colors <- setNames(group_colors[unique_x_groups$brba_code1], unique_x_groups$code1)
-y_colors <- setNames(group_colors[unique_y_groups$brba_code2], unique_y_groups$code2)
+# unique_x_groups <- code_rel_melt_h %>%
+# distinct(code1, brba_code1) %>%
+# arrange(code1)
+# 
+# unique_y_groups <- code_rel_melt_h %>%
+# distinct(code2, brba_code2) %>%
+# arrange(code2)
 
-ggplot(code_rel_melt_h, aes(x = code1, y = reorder(code2, total))) +
-geom_tile(aes(fill = total, colour = bor_box)) + 
+# x_colors <- setNames(group_colors[unique_x_groups$brba_code1], unique_x_groups$code1)
+# y_colors <- setNames(group_colors[unique_y_groups$brba_code2], unique_y_groups$code2)
+
+ggplot(code_rel_melt_h, aes(x = code2, y = code1)) +
+geom_tile(aes(fill = total)) + 
 scale_fill_gradient2(high = "red")+
 ylab("")+
 xlab("")+
+scale_x_discrete(position = "top") +
 labs(fill = "Number of co-occurences")+
-theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.3, size = 14, face = "bold", color = x_colors[levels(code_rel_melt_h$code1)]), 
-      axis.text.y = element_text(size = 14, face = "bold", color = y_colors[levels(code_rel_melt_h$code2)]))+
+theme_minimal() + 
+theme(axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0.3, size = 13), 
+      axis.text.y = element_text(size = 13))+
 geom_text(aes(label = total))+
 scale_color_manual(values = c("black", "#00000000"))+
 guides(color = "none")
 
-#ggsave("figures/ms_figs/heat_tile.png", width = 10, height = 8, units = c("in"))
+#ggsave("figures/ms_figs/heat_tile.png", width = 11, height = 12, units = c("in"))
+
+
+#surveys
+#reshape data
+code_rel_melt_s <- reshape::melt(code_rel_s)
+code_rel_melt_s$variable <- gsub(".", " ", code_rel_melt_s$variable, fixed = TRUE)
+
+code_rel_melt_s <- code_rel_melt_s %>%
+  separate(Code.System, c("key", "code1"), "> ", convert = TRUE) 
+
+code_rel_melt_s$key <- str_trim(code_rel_melt_s$key)
+
+colnames(code_rel_melt_s) <- c("brba_code1", "code1", "code2", "total")
+
+#add brba column to second code col
+code_rel_melt2_s <- code_rel_melt_s
+#code_rel_melt2$brba_code2 <- NA
+
+code_rel_melt2_s$code2[code_rel_melt2_s$code2 == "Interest holder conflicts"] <- "Interest-holder conflicts"
+code_rel_melt2_s$code2[code_rel_melt2_s$code2 == "Missing cross program comparisons"] <- "Missing cross-program comparisons"
+code_rel_melt2_s$code2[code_rel_melt2_s$code2 == "Lack of near real time data"] <- "Lack of near real-time data"
+
+code_rel_melt_h_s <- code_rel_melt2_s %>%
+  #filter(total >= 11) %>%
+  mutate(#bor_box = ifelse(total >= 11, "TRUE", "FALSE"), 
+        #bor_box = as.factor(bor_box), 
+        code1 = as.factor(code1), 
+        code2 = as.factor(code2))
+
+#relevel
+code_rel_melt_h_s$code1 <- factor(code_rel_melt_h_s$code1, levels = c(as.character(unique(code_rel_melt_h_s$code1))))
+
+code_rel_melt_h_s$code2 <- factor(code_rel_melt_h_s$code2, levels =
+c("Unpredictable bycatch patterns", "Missing cross-program comparisons",	"Gaps and inaccuracy",	"Lack of near real-time data", "Cost",	"Discontinuity",	"Confidentiality",	"Lack of incentives",	"Volunteer programs reduce participation",	"Regulated programs reduce participation",	"External factors reducing participation",	"Poor communication and outreach",	"Interest-holder conflicts",	"Stigmatization", "Difficulty assessing impact",	"Limited relevance"))
+
+#plot
+ggplot(code_rel_melt_h_s, aes(x = code2, y = code1)) +
+geom_tile(aes(fill = total)) + 
+scale_fill_gradient2(high = "red")+
+ylab("")+
+xlab("")+
+scale_x_discrete(position = "top") +
+labs(fill = "Number of co-occurences")+
+theme_minimal() + 
+theme(axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0.3, size = 13), 
+      axis.text.y = element_text(size = 13))+
+geom_text(aes(label = total))+
+scale_color_manual(values = c("black", "#00000000"))+
+guides(color = "none")
+
+#ggsave("figures/ms_figs/heat_tile_survey.png", width = 8.5, height = 8, units = c("in"))
 
 ```
 
-![](images/heat_tile_ai.png){fig-align="center" width="10in", height = "8in"}
+![](images/heat_tile_ai.png){fig-align="center" width="10in", height = "12in"}
+
+![](images/heat_tile_survey_ai.png){fig-align="center" width="10in", height = "12in"}
 
 ## Result 3: Variations by industry
 
