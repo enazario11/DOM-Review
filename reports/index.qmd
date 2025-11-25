@@ -1,6 +1,5 @@
 ---
-title: "DOM TOC"
-author: "Emily Nazario | UC Santa Cruz | enazario'@'ucsc.edu"
+title: "Lions TOC"
 date: "`r Sys.Date()`"
 format:
  html: 
@@ -10,8 +9,6 @@ theme: yeti
 fontcolor: "#134f5c"
 ---
 
-## DOM systematic review and end-user surveys TOC
+## Lion analysis TOC
 
-[See here](lit_codes_explore.html) for the initial visualizations of the codes from the literature review
-
-[See here](draft_results.html) for the drafted results that may go in the manuscript
+[See here](lions-stride-sex.html) for the initial exploration into the effects of sex on VO2\~stride frequency

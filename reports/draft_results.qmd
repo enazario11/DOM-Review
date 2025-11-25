@@ -181,7 +181,7 @@ Visualizes each of the themes (Data, Ecological, Social, and Implementation) ide
 ![](images/sunburst.png){fig-align="center" width="100%"}
 
 ### Table
- 
+
 May include in the supplemental, but could be redundant to the sunburst diagram.
 
 ::: panel-tabset
@@ -574,7 +574,7 @@ ggplot(code_ts, aes(as.numeric(Year))) +
 
 ### Result 2.2: Heat maps of theme co-occurence
 
-This heatmap represents number of times two codes co-occurered together in the same article, or "theme co-occurence". Bridges are placed on rows and barriers are separated by columns. Literature codes are on the top and survey codes are on the bottom. 
+This heatmap represents number of times two codes co-occurered together in the same article, or "theme co-occurence". Bridges are placed on rows and barriers are separated by columns. Literature codes are on the top and survey codes are on the bottom.
 
 ```{r}
 #| echo: false
@@ -752,33 +752,27 @@ consv_bar <- ggplot(consv_s) +
                      limits = c(0, 45))+
   scale_y_discrete(expand = expansion(add = c(0,0))) + 
   theme(
-    # Set background color to white
     panel.background = element_rect(fill = "white"),
-    # Set the color and the width of the grid lines for the horizontal axis
     panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
-    # Remove tick marks by setting their length to 0
     axis.ticks.length = unit(0, "mm"),
-    # Remove the title for both axes
     axis.title = element_blank(),
-    # Only left line of the vertical axis is painted in black
     axis.line.y.left = element_line(color = "black"),
-    # Remove labels from the vertical axis
     axis.text.y = element_blank(),
-    # But customize labels for the horizontal axis
     axis.text.x = element_text(family = "Arial", size = 12)) + 
   geom_text(aes(x = perc, y = consv_topic, label = consv_topic),
     hjust = 0,
     nudge_x = 0.3,
     colour = "dodgerblue4",
-    family = "Arial",
+    #family = "Arial",
     size = 3.5)+
   labs(subtitle = "Percent of sum from all articles (%)") + 
   theme(plot.subtitle = element_text(
-      family = "Arial",
+      #family = "Arial",
       size = 13)
   )
 
 consv_bar
+#ggsave("figures/ms_figs/consv_perc/consv_bar.pdf", consv_bar, height = 5, width = 5, units = c("in"))
 ```
 
 ```{r}
@@ -808,29 +802,22 @@ consv_bar2 <- ggplot(consv_s) +
                      limits = c(0, 45))+
   scale_y_discrete(expand = expansion(add = c(0,0))) + 
   theme(
-    # Set background color to white
     panel.background = element_rect(fill = "white"),
-    # Set the color and the width of the grid lines for the horizontal axis
     panel.grid.major.x = element_line(color = "#A8BAC4", size = 0.3),
-    # Remove tick marks by setting their length to 0
     axis.ticks.length = unit(0, "mm"),
-    # Remove the title for both axes
     axis.title = element_blank(),
-    # Only left line of the vertical axis is painted in black
     axis.line.y.left = element_line(color = "black"),
-    # Remove labels from the vertical axis
     axis.text.y = element_blank(),
-    # But customize labels for the horizontal axis
     axis.text.x = element_text(family = "Arial", size = 12)) + 
   geom_text(aes(x = perc, y = consv_bin, label = consv_bin),
     hjust = 0,
     nudge_x = 0.3,
     colour = "dodgerblue4",
-    family = "Arial",
+    #family = "Arial",
     size = 3.5)+
   labs(subtitle = "Percent of sum from all articles (%)") + 
   theme(plot.subtitle = element_text(
-      family = "Arial",
+      #family = "Arial",
       size = 13)
   )
 
@@ -896,6 +883,11 @@ freq_job_survey2 <- freq_job_survey %>%
                               if_else(code_cat %in% c("Implementation bridge", "Implementation barrier"), "Implementation bridge or barrier", NA)))), 
           id = paste(fish_ship, bridge_barr, code_cat)) %>%
   distinct(id, .keep_all = TRUE)
+
+freq_job_survey2 %>%
+  mutate(all_codes = sum(value)) %>%
+  group_by(code_cat) %>%
+  summarise(prop = value/all_codes)
 
 
 #stacked bar plots
@@ -991,7 +983,6 @@ n_job_survey <- code_vars_s %>%
 table(n_job_survey$survey)
 
 ```
-
 
 ```{r}
 #| echo: false
@@ -1164,18 +1155,14 @@ table(n_job_lit$fish_ship)
 
 ```
 
-
 ::: panel-tabset
-
 #### Literature
 
 ![](images/lit_combo.png){fig-align="center" width="5in", height = "8in"}
 
-#### Surveys 
+#### Surveys
 
 ![](images/survey_combo.png){fig-align="center" width="5in", height = "8in"}
-
-
 :::
 
 ## Result 4: Variations by position (survey only)
@@ -1191,7 +1178,6 @@ table(n_job_lit$fish_ship)
 
 
 #survey figs
-
 #format data
 freq_pos_survey <- code_vars_s %>% 
   select(c(6:10, 21:54)) %>% 
@@ -1274,4 +1260,3 @@ table(n_pos_survey$position)
 ```
 
 ![](images/position.png){fig-align="center" width="8in", height = "6in"}
-
