@@ -115,6 +115,7 @@ theme_ms <- function(){
 
 #calc props for sankey_df csv (fine scale codes are raw totals from code_freq file)
 sum_codes <- sum(code_freq$total) #710 codes
+
 code_freq %>% 
   group_by(bridge_barr) %>% 
   summarise(totals = sum(total))
@@ -891,9 +892,11 @@ freq_job_survey2 %>%
 
 
 #stacked bar plots
-ggplot(freq_job_survey2, aes(fill=code_level, y=value, x=fish_ship)) + 
+freq_job_survey2$code_cat <- factor(freq_job_survey2$code_cat, levels = c("Data bridge", "Ecological bridge", "Social bridge", "Implementation bridge", "Data barrier", "Ecological barrier", "Social barrier", "Implementation barrier"))
+  
+ggplot(freq_job_survey2, aes(fill=code_cat, y=value, x=fish_ship)) + 
     geom_bar(position="stack", stat="identity") +
-    scale_fill_manual(values = c("#CFE2F3", "#C5E0B4","royalblue4","#45818E")) +
+    scale_fill_manual(values = c("#CFE2F3", "#6D8C9E","#516875","#28343B", "#F1DA9F", "#FED240", "#DBA400", "#614900")) +
     facet_wrap(~bridge_barr) +
     labs(fill = "") +
     guides(fill=guide_legend(nrow=2,byrow=TRUE))+
@@ -902,25 +905,25 @@ ggplot(freq_job_survey2, aes(fill=code_level, y=value, x=fish_ship)) +
           legend.justification = "left", 
           legend.text = element_text(size = 14, color = "black"))+
     xlab("") + 
-    ylab("Proportion of theme (%)")
+    ylab("Percent of theme (%)")
 
-#ggsave("figures/ms_figs/industry/stack_survey.png", width = 7, height = 6, units = c("in"))
+#ggsave("figures/ms_figs/industry/stack_survey.png", width = 8, height = 6, units = c("in"))
 #ggsave("figures/slides_svg/stack_survey.svg", width = 7, height = 6, units = c("in"))
 
 #radar plots
 freq_job_survey3 <- freq_job_survey %>%
-  # group_by(fish_ship, bridge_barr) %>%
-  # mutate(n_total = sum(total)) %>%
-  # ungroup() %>%
-  # group_by(fish_ship, bridge_barr, code_name) %>%
-  # mutate(n_subtotal = sum(total)) %>%
-  # reframe(value = (n_subtotal/n_total)*100) %>%
-  # ungroup() %>%
-  #mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
-  #distinct(id, .keep_all = TRUE) %>%
-  #select(-c(id))
+  group_by(fish_ship, bridge_barr) %>%
+  mutate(n_total = sum(total)) %>%
+  ungroup() %>%
   group_by(fish_ship, bridge_barr, code_name) %>%
-  summarise(value = sum(total))
+  mutate(n_subtotal = sum(total)) %>%
+  reframe(value = (n_subtotal/n_total)*100) %>%
+  ungroup() %>%
+  mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
+  distinct(id, .keep_all = TRUE) %>%
+  select(-c(id)) %>%
+  group_by(fish_ship, bridge_barr, code_name) %>%
+  summarise(value = sum(value))
 
 top_survey <- freq_job_survey3 %>% 
                 group_by(fish_ship, bridge_barr) %>% 
@@ -946,7 +949,7 @@ top_barrier <- freq_job_survey3 %>%
   mutate_all(~replace_na(., 0))
 
 ggradar::ggradar(top_bridge,
-        values.radar = c(0, 5, 10), 
+        values.radar = c(0, 11, 22), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
@@ -961,7 +964,7 @@ ggradar::ggradar(top_bridge,
 #ggsave("figures/slides_svg/radar_br.svg", height = 8, width = 8, units = c("in"))
 
 ggradar::ggradar(top_barrier,
-        values.radar = c(0, 3, 6), 
+        values.radar = c(0, 14, 28), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
@@ -972,7 +975,7 @@ ggradar::ggradar(top_barrier,
         fill = TRUE, 
         axis.label.size = 3)
 
-#ggsave("figures/ms_figs/industry/radar_ba_survey.png", height = 8, width = 8, units = c("in"))
+ggsave("figures/ms_figs/industry/radar_ba_survey.png", height = 8, width = 8, units = c("in"))
 #ggsave("figures/slides_svg/radar_ba.svg", height = 8, width = 8, units = c("in"))
 
 #get sample sizes of survey respondants by position
@@ -1151,8 +1154,6 @@ n_job_lit <- code_vars %>%
   mutate(fish_ship = ifelse(fish_ship == "Ship strikes", "Shipping", "Fishing"))
 
 table(n_job_lit$fish_ship)
-
-
 ```
 
 ::: panel-tabset

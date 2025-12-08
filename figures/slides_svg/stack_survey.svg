@@ -40,13 +40,13 @@
 <polyline points='111.56,391.06 111.56,79.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='211.95,391.06 211.95,79.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <rect x='66.38' y='93.64' width='90.35' height='27.16' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #CFE2F3;' />
-<rect x='66.38' y='120.81' width='90.35' height='23.28' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #C5E0B4;' />
-<rect x='66.38' y='144.09' width='90.35' height='85.36' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #27408B;' />
-<rect x='66.38' y='229.45' width='90.35' height='147.45' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #45818E;' />
+<rect x='66.38' y='120.81' width='90.35' height='23.28' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #6D8C9E;' />
+<rect x='66.38' y='291.53' width='90.35' height='85.36' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #28343B;' />
+<rect x='66.38' y='144.09' width='90.35' height='147.45' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #516875;' />
 <rect x='166.77' y='93.64' width='90.35' height='12.32' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #CFE2F3;' />
-<rect x='166.77' y='105.96' width='90.35' height='0.00' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #C5E0B4;' />
-<rect x='166.77' y='105.96' width='90.35' height='135.47' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #27408B;' />
-<rect x='166.77' y='241.43' width='90.35' height='135.47' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #45818E;' />
+<rect x='166.77' y='105.96' width='90.35' height='0.00' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #6D8C9E;' />
+<rect x='166.77' y='241.43' width='90.35' height='135.47' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #28343B;' />
+<rect x='166.77' y='105.96' width='90.35' height='135.47' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #516875;' />
 </g>
 <g clip-path='url(#cpMC4wMHw1MDQuMDB8MC4wMHw0MzIuMDA=)'>
 </g>
@@ -67,14 +67,14 @@
 <polyline points='277.66,93.64 498.52,93.64 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='337.90,391.06 337.90,79.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='438.29,391.06 438.29,79.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<rect x='292.72' y='93.64' width='90.35' height='76.55' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #CFE2F3;' />
-<rect x='292.72' y='170.20' width='90.35' height='15.31' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #C5E0B4;' />
-<rect x='292.72' y='185.51' width='90.35' height='7.66' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #27408B;' />
-<rect x='292.72' y='193.17' width='90.35' height='183.73' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #45818E;' />
-<rect x='393.11' y='93.64' width='90.35' height='25.75' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #CFE2F3;' />
-<rect x='393.11' y='119.39' width='90.35' height='0.00' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #C5E0B4;' />
-<rect x='393.11' y='119.39' width='90.35' height='51.50' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #27408B;' />
-<rect x='393.11' y='170.89' width='90.35' height='206.00' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #45818E;' />
+<rect x='292.72' y='93.64' width='90.35' height='76.55' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #F1DA9F;' />
+<rect x='292.72' y='170.20' width='90.35' height='15.31' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FED240;' />
+<rect x='292.72' y='369.24' width='90.35' height='7.66' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #614900;' />
+<rect x='292.72' y='185.51' width='90.35' height='183.73' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #DBA400;' />
+<rect x='393.11' y='93.64' width='90.35' height='25.75' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #F1DA9F;' />
+<rect x='393.11' y='119.39' width='90.35' height='0.00' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FED240;' />
+<rect x='393.11' y='325.39' width='90.35' height='51.50' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #614900;' />
+<rect x='393.11' y='119.39' width='90.35' height='206.00' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #DBA400;' />
 </g>
 <g clip-path='url(#cpMC4wMHw1MDQuMDB8MC4wMHw0MzIuMDA=)'>
 </g>
@@ -106,14 +106,22 @@
 <text x='46.39' y='240.28' text-anchor='end' style='font-size: 14.00px; font-family: "Arial";' textLength='15.57px' lengthAdjust='spacingAndGlyphs'>50</text>
 <text x='46.39' y='169.47' text-anchor='end' style='font-size: 14.00px; font-family: "Arial";' textLength='15.57px' lengthAdjust='spacingAndGlyphs'>75</text>
 <text x='46.39' y='98.66' text-anchor='end' style='font-size: 14.00px; font-family: "Arial";' textLength='23.35px' lengthAdjust='spacingAndGlyphs'>100</text>
-<text transform='translate(16.93,235.27) rotate(-90)' text-anchor='middle' style='font-size: 16.00px; font-family: "Arial";' textLength='169.84px' lengthAdjust='spacingAndGlyphs'>Proportion of theme (%)</text>
+<text transform='translate(16.93,235.27) rotate(-90)' text-anchor='middle' style='font-size: 16.00px; font-family: "Arial";' textLength='151.16px' lengthAdjust='spacingAndGlyphs'>Percent of theme (%)</text>
 <rect x='62.99' y='11.67' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #CFE2F3;' />
-<rect x='290.35' y='11.67' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #C5E0B4;' />
-<rect x='62.99' y='34.43' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #27408B;' />
-<rect x='290.35' y='34.43' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #45818E;' />
-<text x='85.04' y='24.61' style='font-size: 14.00px; font-family: "Arial";' textLength='133.01px' lengthAdjust='spacingAndGlyphs'>Data bridge or barrier</text>
-<text x='312.41' y='24.61' style='font-size: 14.00px; font-family: "Arial";' textLength='167.24px' lengthAdjust='spacingAndGlyphs'>Ecological bridge or barrier</text>
-<text x='85.04' y='47.37' style='font-size: 14.00px; font-family: "Arial";' textLength='199.12px' lengthAdjust='spacingAndGlyphs'>Implementation bridge or barrier</text>
-<text x='312.41' y='47.37' style='font-size: 14.00px; font-family: "Arial";' textLength='141.57px' lengthAdjust='spacingAndGlyphs'>Social bridge or barrier</text>
+<rect x='165.12' y='11.67' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #6D8C9E;' />
+<rect x='301.48' y='11.67' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #516875;' />
+<rect x='412.17' y='11.67' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #28343B;' />
+<rect x='62.99' y='34.43' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #F1DA9F;' />
+<rect x='165.12' y='34.43' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FED240;' />
+<rect x='301.48' y='34.43' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #DBA400;' />
+<rect x='412.17' y='34.43' width='15.86' height='15.86' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #614900;' />
+<text x='85.04' y='24.61' style='font-size: 14.00px; font-family: "Arial";' textLength='72.35px' lengthAdjust='spacingAndGlyphs'>Data bridge</text>
+<text x='187.17' y='24.61' style='font-size: 14.00px; font-family: "Arial";' textLength='106.59px' lengthAdjust='spacingAndGlyphs'>Ecological bridge</text>
+<text x='323.53' y='24.61' style='font-size: 14.00px; font-family: "Arial";' textLength='80.91px' lengthAdjust='spacingAndGlyphs'>Social bridge</text>
+<text x='434.22' y='24.61' style='font-size: 14.00px; font-family: "Arial";' textLength='138.47px' lengthAdjust='spacingAndGlyphs'>Implementation bridge</text>
+<text x='85.04' y='47.37' style='font-size: 14.00px; font-family: "Arial";' textLength='73.89px' lengthAdjust='spacingAndGlyphs'>Data barrier</text>
+<text x='187.17' y='47.37' style='font-size: 14.00px; font-family: "Arial";' textLength='108.12px' lengthAdjust='spacingAndGlyphs'>Ecological barrier</text>
+<text x='323.53' y='47.37' style='font-size: 14.00px; font-family: "Arial";' textLength='82.45px' lengthAdjust='spacingAndGlyphs'>Social barrier</text>
+<text x='434.22' y='47.37' style='font-size: 14.00px; font-family: "Arial";' textLength='140.00px' lengthAdjust='spacingAndGlyphs'>Implementation barrier</text>
 </g>
 </svg>
