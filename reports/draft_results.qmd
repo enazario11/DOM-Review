@@ -867,7 +867,7 @@ freq_job_survey$id[freq_job_survey$sub_theme == "cost"] <- "Barrier_Social barri
 freq_job_survey <- freq_job_survey %>%
   separate_wider_delim(id, delim = "_", names = c("bridge_barr", "code_cat", "code_name"))
 
-freq_job_survey$bridge_barr <- factor(freq_job_survey$bridge_barr, levels = c("Bridge", "Barrier"))
+freq_job_survey$bridge_barr <- factor(freq_job_survey$bridge_barr, levels = c("Barrier", "Bridge"))
 
 #calculate proportions
 freq_job_survey2 <- freq_job_survey %>%
@@ -893,6 +893,7 @@ freq_job_survey2 %>%
 
 #stacked bar plots
 freq_job_survey2$code_cat <- factor(freq_job_survey2$code_cat, levels = c("Data bridge", "Ecological bridge", "Social bridge", "Implementation bridge", "Data barrier", "Ecological barrier", "Social barrier", "Implementation barrier"))
+#freq_job_survey2$bridge_barr <- factor(freq_job_survey2$bridge_barr, levels = c())
   
 ggplot(freq_job_survey2, aes(fill=code_cat, y=value, x=fish_ship)) + 
     geom_bar(position="stack", stat="identity") +
@@ -955,7 +956,7 @@ ggradar::ggradar(top_bridge,
         gridline.min.colour = "gray60",
         gridline.mid.colour = "gray60",
         gridline.max.colour = "gray60",
-        group.colours = c("#F29325", "#007172"),#007172
+        group.colours = c("#A4BFB8", "#3B5948"),
         legend.position = "bottom", 
         fill = TRUE, 
         axis.label.size = 3)
@@ -970,12 +971,12 @@ ggradar::ggradar(top_barrier,
         gridline.min.colour = "gray60",
         gridline.mid.colour = "gray60",
         gridline.max.colour = "gray60",
-        group.colours = c("#F29325", "#007172"),#007172
+        group.colours = c("#A4BFB8", "#3B5948"),#007172
         legend.position = "none", 
         fill = TRUE, 
         axis.label.size = 3)
 
-ggsave("figures/ms_figs/industry/radar_ba_survey.png", height = 8, width = 8, units = c("in"))
+#ggsave("figures/ms_figs/industry/radar_ba_survey.png", height = 8, width = 8, units = c("in"))
 #ggsave("figures/slides_svg/radar_ba.svg", height = 8, width = 8, units = c("in"))
 
 #get sample sizes of survey respondants by position
@@ -1008,7 +1009,7 @@ freq_job_lit <- code_vars %>%
   group_by(fish_ship, sub_theme) %>%
   summarise(total = sum(total), 
             .groups = "drop") %>%
-  filter(fish_ship == "Bycatch" | fish_ship == "Ship strikes" | fish_ship == "Overfishing" | fish_ship == "Entanglement" | fish_ship == "Avoid fisheries discharge")
+  filter(fish_ship == "Bycatch" | fish_ship == "Ship strikes")
 
 lib_job_lit <- code_freq %>%
   mutate(id = paste(bridge_barr, code_cat, code_name, sep = "_")) %>% 
@@ -1040,7 +1041,7 @@ freq_job_lit$id[freq_job_lit$sub_theme == "resource_availability"] <-
 freq_job_lit <- freq_job_lit %>%
   separate_wider_delim(id, delim = "_", names = c("bridge_barr", "code_cat", "code_name"))
 
-freq_job_lit$bridge_barr <- factor(freq_job_lit$bridge_barr, levels = c("Bridge", "Barrier"))
+freq_job_lit$bridge_barr <- factor(freq_job_lit$bridge_barr, levels = c("Barrier", "Bridge"))
 
 freq_job_lit <- freq_job_lit %>%
   mutate(fish_ship = ifelse(fish_ship == "Ship strikes", "Shipping", "Fishing"))
@@ -1062,9 +1063,11 @@ freq_job_lit2 <- freq_job_lit %>%
 
 
 #stacked bar plots
-ggplot(freq_job_lit2, aes(fill=code_level, y=value, x=fish_ship)) + 
+freq_job_lit2$code_cat <- factor(freq_job_lit2$code_cat, levels = c("Data bridge", "Ecological bridge", "Social bridge", "Data barrier", "Ecological barrier", "Social barrier"))
+  
+ggplot(freq_job_lit2, aes(fill=code_cat, y=value, x=fish_ship)) + 
     geom_bar(position="stack", stat="identity") +
-    scale_fill_manual(values = c("#CFE2F3", "#C5E0B4","#45818E")) +
+    scale_fill_manual(values = c("#CFE2F3", "#6D8C9E","#516875", "#F1DA9F", "#FED240", "#DBA400")) +
     facet_wrap(~bridge_barr) +
     labs(fill = "") +
     guides(fill=guide_legend(nrow=2,byrow=TRUE)) +
@@ -1073,24 +1076,24 @@ ggplot(freq_job_lit2, aes(fill=code_level, y=value, x=fish_ship)) +
           legend.justification = "left", 
           legend.text = element_text(size = 14, color = "black")) +
     xlab("") + 
-    ylab("Proportion of theme (%)")
+    ylab("Percent of theme (%)")
 
 #ggsave("figures/ms_figs/industry/stack_lit.png", width = 7, height = 6, units = c("in"))
 
 #radar plots
 freq_job_lit3 <- freq_job_lit %>%
-  # group_by(fish_ship, bridge_barr) %>%
-  # mutate(n_total = sum(total)) %>%
-  # ungroup() %>%
-  # group_by(fish_ship, bridge_barr, code_name) %>% 
-  # mutate(n_subtotal = sum(total)) %>%
-  # reframe(value = (n_subtotal/n_total)*100) %>%
-  # ungroup() %>%
-  # mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
-  # distinct(id, .keep_all = TRUE) %>%
-  # select(-c(id)) %>%
+  group_by(fish_ship, bridge_barr) %>%
+  mutate(n_total = sum(total)) %>%
+  ungroup() %>%
+  group_by(fish_ship, bridge_barr, code_name) %>% 
+  mutate(n_subtotal = sum(total)) %>%
+  reframe(value = (n_subtotal/n_total)*100) %>%
+  ungroup() %>%
+  mutate(id = paste(fish_ship, bridge_barr, code_name)) %>%
+  distinct(id, .keep_all = TRUE) %>%
+  select(-c(id)) %>%
   group_by(fish_ship, bridge_barr, code_name) %>%
-  summarise(value = sum(total))
+  summarise(value = sum(value))
 
 top_lit <- freq_job_lit3 %>% 
                 group_by(fish_ship, bridge_barr) %>% 
@@ -1116,13 +1119,13 @@ top_barrier <- freq_job_lit3 %>%
   mutate_all(~replace_na(., 0))
 
 ggradar::ggradar(top_bridge,
-        values.radar = c(0, 20, 40), 
+        values.radar = c(0, 8, 16), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
         gridline.mid.colour = "gray60",
         gridline.max.colour = "gray60",
-        group.colours = c("#F29325", "#007172"),
+        group.colours = c("#A4BFB8", "#3B5948"),
         legend.position = "bottom", 
         fill = TRUE, 
         axis.label.size = 3)
@@ -1130,19 +1133,18 @@ ggradar::ggradar(top_bridge,
 #ggsave("figures/ms_figs/industry/radar_br_lit.png", height = 8, width = 8, units = c("in"))
 
 ggradar::ggradar(top_barrier,
-        values.radar = c(0, 15, 35), 
+        values.radar = c(0, 16, 38), 
         background.circle.colour = "white",
         axis.line.colour = "gray60",
         gridline.min.colour = "gray60",
         gridline.mid.colour = "gray60",
         gridline.max.colour = "gray60",
-        group.colours = c("#F29325", "#007172"),
+        group.colours = c("#A4BFB8", "#3B5948"),
         legend.position = "none", 
         fill = TRUE, 
         axis.label.size = 3)
 
-#("figures/ms_figs/industry/radar_ba_lit.png", height = 8, width = 8, units = c("in"))
-
+#ggsave("figures/ms_figs/industry/radar_ba_lit.png", height = 8, width = 8, units = c("in"))
 
 #get sample sizes of survey respondants by position
 n_job_lit <- code_vars %>% 
@@ -1177,7 +1179,6 @@ table(n_job_lit$fish_ship)
 #| fig-align: center
 #| include: false
 
-
 #survey figs
 #format data
 freq_pos_survey <- code_vars_s %>% 
@@ -1210,7 +1211,7 @@ freq_pos_survey$id[freq_pos_survey$sub_theme == "cost"] <- "Barrier_Social barri
 freq_pos_survey <- freq_pos_survey %>%
   separate_wider_delim(id, delim = "_", names = c("bridge_barr", "code_cat", "code_name"))
 
-freq_pos_survey$bridge_barr <- factor(freq_pos_survey$bridge_barr, levels = c("Bridge", "Barrier"))
+#freq_pos_survey$bridge_barr <- factor(freq_pos_survey$bridge_barr, levels = c("Bridge", "Barrier"))
 
 #calculate proportions
 freq_pos_survey2 <- freq_pos_survey %>%
@@ -1230,10 +1231,12 @@ freq_pos_survey2 <- freq_pos_survey %>%
 
 
 #stacked bar plots
-ggplot(freq_pos_survey2, aes(fill=code_level, y=value, x=position)) + 
+freq_pos_survey2$code_cat <- factor(freq_pos_survey2$code_cat, levels = c("Data bridge", "Ecological bridge", "Social bridge", "Implementation bridge", "Data barrier", "Ecological barrier", "Social barrier", "Implementation barrier"))
+
+ggplot(freq_pos_survey2, aes(fill=code_cat, y=value, x=position)) + 
     geom_bar(position="stack", stat="identity") +
-    scale_fill_manual(values = c("#CFE2F3", "#C5E0B4","royalblue4","#45818E")) +
-    facet_wrap(~bridge_barr) +
+    scale_fill_manual(values = c("#CFE2F3", "#6D8C9E","#516875","#28343B", "#F1DA9F", "#FED240", "#DBA400", "#614900")) +
+    facet_wrap(~bridge_barr, ncol = 1) +
     labs(fill = "") +
     theme_ms() +
     theme(legend.position = "top", 
@@ -1242,11 +1245,10 @@ ggplot(freq_pos_survey2, aes(fill=code_level, y=value, x=position)) +
           legend.text = element_text(size = 14, color = "black"))+
     guides(fill=guide_legend(nrow=2,byrow=TRUE))+
     xlab("") + 
-    ylab("Proportion of theme (%)")+
+    ylab("Percent of theme (%)")+
     theme(axis.text.x = element_text(size = 14, color = "black", angle = 60, hjust = 1))
 
-#ggsave("figures/ms_figs/position/stack_survey.png", width = 10, height = 8, units = c("in"))
-
+ggsave("figures/ms_figs/supp/position/stack_survey.png", width = 8, height = 11, units = c("in"))
 
 #get sample sizes of survey respondants by position
 n_pos_survey <- code_vars_s %>% 
